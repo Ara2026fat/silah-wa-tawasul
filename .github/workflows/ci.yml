@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check
+        run: npx tsc -b --noEmit
+
+      - name: Build
+        run: npm run build
+        env:
+          # CI builds without real Supabase credentials — the app is
+          # designed to degrade cleanly to fully-local when these are
+          # unset (see README → "Optional: enable cloud sync"), so this
+          # confirms that path also builds correctly, not just the
+          # cloud-sync-enabled one.
+          VITE_SUPABASE_URL: ''
+          VITE_SUPABASE_ANON_KEY: ''

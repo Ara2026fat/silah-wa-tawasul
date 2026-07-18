@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    @apply bg-sand-100 text-ink-600 dark:bg-night-canvas dark:text-mist-100;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  /* Color and background changes ease instead of snapping — the one place
+     motion is added, since it directly serves the "smooth transitions"
+     and dark-mode-switch requirements without being decorative. */
+  body,
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 180ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Visible keyboard focus everywhere, never suppressed */
+  :focus-visible {
+    outline: 2px solid theme('colors.olive.500');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .dark :focus-visible {
+    outline-color: theme('colors.olive.400');
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
