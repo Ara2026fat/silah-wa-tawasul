@@ -5563,22 +5563,6 @@ if (typeof MutationObserver !== 'undefined') {
   new MutationObserver(function () { sanitizeInternalLinks(); }).observe(document.body, { childList: true, subtree: true });
 }
 
-/* تسجيل عامل خدمة (Service Worker) — يكمّل جاهزية PWA الحقيقية
-   (بطاقة تعريف + عامل خدمة معًا = تطبيق ويب تقدّمي مكتمل قابل
-   للتثبيت والعمل بلا إنترنت). بما إن هذا ملف HTML واحد بلا ملفات
-   منفصلة، نبني عامل الخدمة كنص JS ونسجّله عبر Blob URL بدل ملف sw.js
-   حقيقي — تقنية معروفة لنشر تطبيقات PWA بملف واحد. */
-if ('serviceWorker' in navigator) {
-  var swCode = "self.addEventListener('install',function(e){self.skipWaiting();});" +
-    "self.addEventListener('activate',function(e){self.clients.claim();});" +
-    "self.addEventListener('fetch',function(e){e.respondWith(fetch(e.request).catch(function(){return caches.match(e.request);}));});";
-  try {
-    var swBlob = new Blob([swCode], { type: 'application/javascript' });
-    var swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl).catch(function () { /* بيئات لا تدعم Blob-based SW، تجاهل بأمان */ });
-  } catch (e) { /* تجاهل بأمان لو Blob/URL غير مدعومة */ }
-}
-
   </script>
 </body>
 </html>
