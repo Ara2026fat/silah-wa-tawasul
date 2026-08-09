@@ -2123,6 +2123,29 @@ html[data-theme="night"] {
     </nav>
 
   <script>
+/* مقدّمة حالة الموجّه — يجب إنشاؤها قبل أي كود آخر (بما فيه
+   ensureOnboarded دالة بـscript.js) قد يستدعي دوال الموجّه
+   مبكرًا جدًا، خصوصًا بأول زيارة بلا أي بيانات محفوظة سابقًا. */
+var ROUTE_MAP = {
+  'index.html': 'home',
+  'parents.html': 'category:parents:parents:',
+  'family.html': 'category:family:family:',
+  'siblings.html': 'category:siblings:siblings:',
+  'relatives.html': 'category:relatives:relatives:',
+  'friends.html': 'category:friends:friends:friend,close_friend',
+  'coworkers.html': 'category:coworkers:friends:coworker',
+  'add-person.html': 'add-person',
+  'person-profile.html': 'profile',
+  'reminders.html': 'reminders',
+  'settings.html': 'settings',
+  'onboarding.html': 'onboarding',
+};
+var SHELL_IDS = ['home', 'category', 'add-person', 'profile', 'reminders', 'settings', 'onboarding'];
+var spaCurrentParams = {};
+var spaHistoryStack = [];
+var spaCurrentPage = 'home';
+
+
 'use strict';
 /* بلا أي بذرة بيانات — يبدأ المستخدم من شاشة الإعداد الأولي الحقيقية ببياناته هو */
 
@@ -4332,11 +4355,14 @@ function approxHijriYear(gregorianYear) {
 
 function renderCopyrightFooter(withLogo) {
   const year = new Date().getFullYear();
+  const dateLine = '<p class="v2-copyright-sub" dir="rtl">' + toArabicDigits(year) + 'م / ' + toArabicDigits(approxHijriYear(year)) + 'هـ</p>';
+  const nameLine = withLogo ? '<p class="v2-copyright-sub" dir="rtl">عرفات الراجحي</p>' : '';
   return (
     '<div class="v2-copyright-footer">' +
       (withLogo && LOGO_ICONS[currentTheme() && LOGO_ICONS[currentTheme()] ? currentTheme() : 'default'] ? '<img class="v2-copyright-logo" src="' + LOGO_ICONS[currentTheme() && LOGO_ICONS[currentTheme()] ? currentTheme() : 'default'] + '" alt="" />' : '') +
       '<p class="v2-copyright-main" dir="rtl">© صلة وتواصل Sila wa Tawasul</p>' +
-      '<p class="v2-copyright-sub" dir="rtl">عرفات الراجحي · ' + toArabicDigits(year) + 'م / ' + toArabicDigits(approxHijriYear(year)) + 'هـ</p>' +
+      nameLine +
+      dateLine +
       '<p class="v2-copyright-dua" dir="rtl">اللهم اغفر لمطورها ولمستخدميها ولوالديهم وللمسلمين أجمعين</p>' +
     '</div>'
   );
@@ -5454,6 +5480,7 @@ function spaRenderPage(page) {
 }
 
 function spaGo(page, params, pushToHistory) {
+  if (!spaHistoryStack) spaHistoryStack = [];
   if (pushToHistory !== false) spaHistoryStack.push({ page: spaCurrentPage, params: spaCurrentParams });
   spaCurrentPage = page;
   spaCurrentParams = params || {};
