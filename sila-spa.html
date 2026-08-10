@@ -1872,6 +1872,7 @@ html[data-theme="night"] {
 .page-shell[hidden] { display: none !important; }
 
   </style>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7f11bad37028446693a75bd93a666f0b"}'></script>
 </head>
 <body>
 
@@ -2442,6 +2443,15 @@ const TRANSLATIONS = {
     how_it_works_desc: 'جولة سريعة تشرح أهم ميزات صلة وتواصل — تقدر تراجعها متى ما حبيت.',
     how_it_works_btn: 'ابدأ الجولة',
     restart_onboarding_label: 'الإعداد الأولي',
+    backup_label: '💾 نسخة احتياطية',
+    backup_desc: 'احفظ نسخة من كل بياناتك بملف صغير على جهازك — تقدر ترجّعها لو غيّرت جوالك، أو مسحت بيانات المتصفح بالغلط.',
+    backup_export_btn: 'احفظ نسخة احتياطية الآن',
+    backup_import_btn: 'استرجاع من نسخة احتياطية',
+    backup_export_success: 'تم حفظ النسخة الاحتياطية 🌿',
+    backup_export_error: 'تعذّر حفظ النسخة، جرّب مرة ثانية',
+    backup_import_confirm: 'استرجاع النسخة سيستبدل بياناتك الحالية بمحتوى الملف. هل تريد المتابعة؟',
+    backup_import_success: 'تم الاسترجاع بنجاح، يُعاد تحميل التطبيق...',
+    backup_import_error: 'هذا الملف غير صالح، تأكد إنه نسخة احتياطية صحيحة من صلة وتواصل',
     factory_reset_label: '⚠️ إعادة ضبط كاملة',
     factory_reset_desc: 'يمسح كل البيانات — كل الأشخاص، الإعدادات، والتخصيصات — ويرجّع التطبيق لحالته الأولى تمامًا، كأنه لأول مرة. لا يمكن التراجع عن هذا.',
     factory_reset_btn: 'امسح كل شيء وابدأ من جديد',
@@ -2681,6 +2691,15 @@ const TRANSLATIONS = {
     how_it_works_desc: "A quick tour explaining Sila wa Tawasul's key features — revisit it anytime you like.",
     how_it_works_btn: 'Start the tour',
     restart_onboarding_label: 'Initial setup',
+    backup_label: '💾 Backup',
+    backup_desc: "Save a copy of all your data to a small file on your device -- you can restore it if you switch phones or accidentally clear your browser data.",
+    backup_export_btn: 'Save backup now',
+    backup_import_btn: 'Restore from backup',
+    backup_export_success: 'Backup saved 🌿',
+    backup_export_error: "Couldn't save the backup, please try again",
+    backup_import_confirm: 'Restoring will replace your current data with the file contents. Continue?',
+    backup_import_success: 'Restored successfully, reloading the app...',
+    backup_import_error: 'This file is not valid, make sure it is a real Sila wa Tawasul backup',
     factory_reset_label: '⚠️ Full reset',
     factory_reset_desc: "Erases everything -- every person, all settings, and customizations -- and returns the app to its very first-launch state. This can't be undone.",
     factory_reset_btn: 'Erase everything and start fresh',
@@ -4403,6 +4422,55 @@ function currentTheme() {
    الأسماء المخصّصة، الوضع اللوني، اللغة، كل شيء) وترجع بحالة أول
    تنصيب تمامًا. تمسح أي مفتاح يبدأ بـ"sila:" تلقائيًا — بلا حاجة
    لتحديث القائمة يدويًا كل ما نضيف مفتاح تخزين جديد بالمستقبل. */
+/* نسخة احتياطية — تصدير كل بيانات sila: كملف JSON يقدر المستخدم
+   يحتفظ فيه ويرجّعه لاحقًا. أهم شبكة أمان قبل الإطلاق العام، لأن
+   كل البيانات تعيش محليًا بالمتصفح بلا أي خادم مركزي. */
+function exportBackup() {
+  try {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('sila:') === 0) data[k] = localStorage.getItem(k);
+    }
+    const payload = { app: 'sila-wa-tawasul', version: 1, exportedAt: new Date().toISOString(), data: data };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateStr = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = 'sila-wa-tawasul-backup-' + dateStr + '.json';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      if (a.parentNode) a.parentNode.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1500);
+    toast(t('backup_export_success'), 'success');
+  } catch (e) {
+    toast(t('backup_export_error'), 'error');
+  }
+}
+function importBackupFile(file) {
+  if (!file) return;
+  if (!confirm(t('backup_import_confirm'))) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const payload = JSON.parse(e.target.result);
+      if (!payload || typeof payload.data !== 'object') throw new Error('invalid backup shape');
+      Object.keys(payload.data).forEach(function (k) {
+        if (k.indexOf('sila:') === 0) localStorage.setItem(k, payload.data[k]);
+      });
+      toast(t('backup_import_success'), 'success');
+      setTimeout(function () { window.location.reload(); }, 900);
+    } catch (err) {
+      toast(t('backup_import_error'), 'error');
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
 function factoryReset() {
   try {
     const keys = [];
@@ -4523,6 +4591,13 @@ function settingsTabContent(tab, settings) {
       '<a class="v2-add-btn" href="onboarding.html">' + t('restart_onboarding_btn') + '</a>' +
     '</section>' +
     '<section class="v2-info-card" style="margin-bottom:14px">' +
+      '<h2 class="v2-notes-head"><span>' + t('backup_label') + '</span></h2>' +
+      '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('backup_desc') + '</p>' +
+      '<button type="button" class="v2-add-btn" id="backup-export-btn">' + t('backup_export_btn') + '</button>' +
+      '<button type="button" class="v2-add-btn" style="margin-top:8px" id="backup-import-btn">' + t('backup_import_btn') + '</button>' +
+      '<input type="file" id="backup-import-input" accept="application/json" hidden />' +
+    '</section>' +
+    '<section class="v2-info-card" style="margin-bottom:14px">' +
       '<h2 class="v2-notes-head"><span>' + t('factory_reset_label') + '</span></h2>' +
       '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('factory_reset_desc') + '</p>' +
       '<button type="button" class="v2-danger-btn" id="factory-reset-btn">' + t('factory_reset_btn') + '</button>' +
@@ -4599,6 +4674,19 @@ function renderSettingsPage() {
 
   const installBtn = root.querySelector('#install-btn');
   if (installBtn) installBtn.addEventListener('click', triggerInstallFlow);
+
+  const backupExportBtn = root.querySelector('#backup-export-btn');
+  if (backupExportBtn) backupExportBtn.addEventListener('click', exportBackup);
+  const backupImportBtn = root.querySelector('#backup-import-btn');
+  const backupImportInput = root.querySelector('#backup-import-input');
+  if (backupImportBtn && backupImportInput) {
+    backupImportBtn.addEventListener('click', function () { backupImportInput.click(); });
+    backupImportInput.addEventListener('change', function (e) {
+      const file = e.target.files && e.target.files[0];
+      importBackupFile(file);
+      backupImportInput.value = '';
+    });
+  }
 
   const resetBtn = root.querySelector('#factory-reset-btn');
   if (resetBtn) {
@@ -5648,7 +5736,7 @@ function sanitizeInternalLinks(root) {
   for (var i = 0; i < links.length; i++) {
     var a = links[i];
     var href = a.getAttribute('href');
-    if (!href || href.indexOf('http') === 0 || href.indexOf('#') === 0 || href.indexOf('tel:') === 0 || href.indexOf('mailto:') === 0) continue;
+    if (!href || href.indexOf('http') === 0 || href.indexOf('#') === 0 || href.indexOf('tel:') === 0 || href.indexOf('mailto:') === 0 || href.indexOf('blob:') === 0 || href.indexOf('data:') === 0) continue;
     a.setAttribute('data-nav', href);
     a.setAttribute('href', '#');
   }
