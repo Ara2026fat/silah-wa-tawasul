@@ -1293,7 +1293,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 10px 20px calc(76px + env(safe-area-inset-bottom));
+  padding: 10px 20px calc(98px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1451,52 +1451,97 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 
 /* ---------- التنقل السفلي — شريط واحد أنيق ---------- */
+/* شريط التنقّل — لوح زجاجي عائم لا شريط ملتصق بحافة الشاشة.
+   الزجاج يلتقط لون الخلفية المتحرّكة تحته، فيتغيّر مع كل وضع لوني
+   بلا كود إضافي. */
 .hs2-nav {
   position: fixed;
-  bottom: 0;
-  inset-inline: 0;
-  max-width: 460px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  inset-inline: 14px;
+  max-width: 432px;
   margin: 0 auto;
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 9px 14px calc(9px + env(safe-area-inset-bottom));
+  padding: 6px 6px;
+  border-radius: 26px;
   background: var(--surface);
-  border-top: 1px solid var(--line);
-  box-shadow: 0 -4px 16px rgba(48, 42, 38, 0.06);
+  background: color-mix(in srgb, var(--surface) 74%, transparent);
+  backdrop-filter: blur(24px) saturate(155%);
+  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  border: 1px solid var(--line);
+  border-color: color-mix(in srgb, var(--line) 65%, transparent);
+  box-shadow: 0 14px 34px -10px rgba(48, 42, 38, 0.3), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
 }
+
+/* هدف لمس مريح فعليًا: 64×56 بدل 44×28 — فرق محسوس لمن يضغط بإبهامه */
 .hs2-nav-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 5px 14px;
-  border-radius: 14px;
+  justify-content: center;
+  gap: 4px;
+  min-width: 64px;
+  min-height: 56px;
+  padding: 8px 10px;
+  border-radius: 20px;
   font-size: 10.5px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-muted);
-  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 150ms ease-out, color 150ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease-out;
 }
-.hs2-nav-item:active { transform: scale(0.92); }
-.hs2-nav-item.is-active { color: var(--turquoise-text); background: var(--turquoise-tint); }
+.hs2-nav-item > * { position: relative; z-index: 1; }
+.hs2-nav-item svg { transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.hs2-nav-item:active { transform: scale(0.94); }
 
-/* زر الإضافة — مندمج بالشريط لكن بحضور خاص عبر شارة دائرية حول الأيقونة فقط */
+/* الكبسولة الزجاجية للعنصر النشط — تتمدّد من الداخل عند الانتقال
+   بدل أن تومض فجأة */
+.hs2-nav-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: var(--turquoise-tint);
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--turquoise) 30%, transparent),
+    color-mix(in srgb, var(--turquoise) 9%, transparent));
+  border: 1px solid color-mix(in srgb, var(--turquoise) 38%, transparent);
+  box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--turquoise) 70%, transparent),
+              0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+  transition: opacity 240ms ease-out, transform 340ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hs2-nav-item.is-active::before { opacity: 1; transform: scale(1); }
+.hs2-nav-item.is-active { color: var(--turquoise-text); }
+.hs2-nav-item.is-active svg { transform: translateY(-1px) scale(1.1); }
+
+/* زر الإضافة — لوح زجاجي مضيء، والعلامة تدور ربع دورة عند الضغط */
 .hs2-nav-add-badge {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--turquoise);
+  width: 36px;
+  height: 36px;
+  border-radius: 13px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--turquoise) 82%, #fff), var(--turquoise));
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 8px -1px rgba(124, 183, 180, 0.55);
+  box-shadow: 0 8px 18px -5px rgba(124, 183, 180, 0.7), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 200ms ease-out;
 }
+.hs2-nav-add:active .hs2-nav-add-badge {
+  transform: rotate(90deg) scale(0.92);
+  box-shadow: 0 4px 10px -4px rgba(124, 183, 180, 0.6), 0 1px 0 rgba(255, 255, 255, 0.55) inset;
+}
+.hs2-nav-add::before { display: none; }
 
 @media (min-width: 640px) {
   .hs2-page { max-width: 560px; }
-  .hs2-nav { max-width: 560px; }
+  .hs2-nav { max-width: 532px; }
   .hs2-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
 }
 
@@ -3229,7 +3274,7 @@ const HS_ICONS = {
   family: '<g transform="translate(12,12) scale(1.18) translate(-12,-12)"><path d="M4 11.5l8-7 8 7"/><path d="M6 10.5v9h12v-9"/><path d="M12 13.2c-1.6-1.8-4.3-.4-3.6 1.6.4 1.1 1.9 2.2 3.6 3.6 1.7-1.4 3.2-2.5 3.6-3.6.7-2-2-3.4-3.6-1.6z"/></g>',
   reminders: '<path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/>',
   activity: '<path d="M3 16.5l5.5-5.5 4 4L21 6.5"/><path d="M14.5 6.5H21v6.5"/>',
-  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15 1.65 1.65 0 0 0 3.16 14H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.4.4.75.75 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  settings: '<path d="M4 7.5h7.2M16.8 7.5H20"/><path d="M4 16.5h3.2M12.8 16.5H20"/><circle cx="14" cy="7.5" r="2.6"/><circle cx="10" cy="16.5" r="2.6"/>',
   home: '<path d="M3 11.5l9-8 9 8"/><path d="M5 10.5v10h5v-6h4v6h5v-10"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 10"/>',
@@ -4498,7 +4543,7 @@ function renderCopyrightFooter(withLogo) {
     ? '<p class="v2-copyright-sub">' + year + ' CE / ' + hijri + ' AH</p>'
     : '<p class="v2-copyright-sub" dir="rtl">' + toArabicDigits(year) + 'م / ' + toArabicDigits(hijri) + 'هـ</p>';
   const nameLine = withLogo
-    ? (isEn ? '<p class="v2-copyright-sub">Arafat Alrajhi</p>' : '<p class="v2-copyright-sub" dir="rtl">عرفات الراجحي</p>')
+    ? (isEn ? '<p class="v2-copyright-sub">Arafat AlRajhi</p>' : '<p class="v2-copyright-sub" dir="rtl">عرفات الراجحي</p>')
     : '';
   const mainLine = isEn
     ? '<p class="v2-copyright-main">© Sila wa Tawasul</p>'
