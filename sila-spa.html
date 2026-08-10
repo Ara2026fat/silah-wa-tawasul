@@ -670,6 +670,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 /* ---------- فلاتر ---------- */
 .v2-chip-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 12px;
 }
@@ -912,18 +913,19 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 /* ---------- شريط تبويبات الإعدادات — يبدّل بين شاشات بدل التمرير الطويل ---------- */
 .v2-settings-tabs {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
-  overflow-x: auto;
   padding-bottom: 4px;
   margin-bottom: 14px;
 }
 .v2-settings-tab {
   flex-shrink: 0;
-  padding: 9px 16px;
+  padding: 8px 14px;
   border-radius: 999px;
   background: var(--surface);
   color: var(--text-muted);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   box-shadow: var(--shadow);
   transition: background 150ms ease, color 150ms ease;
@@ -3486,46 +3488,33 @@ function hsIcon(name, size) {
    إعداد صامت في الإعدادات لا سؤال يعترض المستخدم.
    ========================================================= */
 const GREETING_DIALECTS = [
-  { key: 'fusha',   label: 'الفصحى',    labelEn: 'Standard Arabic' },
-  { key: 'gulf',    label: 'الخليجية',  labelEn: 'Gulf' },
-  { key: 'egypt',   label: 'المصرية',   labelEn: 'Egyptian' },
-  { key: 'sham',    label: 'الشامية',   labelEn: 'Levantine' },
-  { key: 'maghreb', label: 'المغاربية', labelEn: 'Maghrebi' },
+  { key: 'fusha',  label: 'الفصحى',  labelEn: 'Standard Arabic' },
+  { key: 'darija', label: 'الدارجة', labelEn: 'Colloquial' },
 ];
 const GREETINGS = {
+  /* الفصحى هي صوت التطبيق الأصلي — أوسع وأجمل ما لدينا */
   fusha: {
-    morning: ['أسعد الله صباحك', 'صباح الخير', 'صبّحك الله بالخير', 'طاب صباحك'],
-    day:     ['طاب يومك', 'أسعد الله يومك', 'نهارك مبارك', 'حيّاك الله'],
-    evening: ['أسعد الله مساءك', 'مساء الخير', 'مسّاك الله بالخير', 'طاب مساؤك'],
-    night:   ['طابت ليلتك', 'ليلة هانئة', 'أراح الله بالك', 'تصبح على خير'],
+    morning: ['أسعد الله صباحك', 'صبّحك الله بالخير'],
+    day:     ['أسعد الله يومك', 'بارك الله لك في يومك'],
+    evening: ['أسعد الله مساءك', 'مسّاك الله بالخير'],
+    night:   ['أراح الله بالك', 'ليلةٌ هانئة'],
   },
-  gulf: {
-    morning: ['صبّحك الله بالخير', 'صباح السعد', 'صباح الخير', 'هلا والله'],
-    day:     ['حيّاك الله', 'الله يسعد أوقاتك', 'يومك أبيض', 'الله يحفظك'],
-    evening: ['مسّاك الله بالخير', 'الله يسعد مساك', 'مساء السعد', 'مساء الخير'],
-    night:   ['الله يمسيك بخير', 'نوم العافية', 'تصبح على خير', 'أراح الله بالك'],
-  },
-  egypt: {
-    morning: ['صباح الفل', 'صباح القشطة', 'صباح العسل', 'صباح الخير'],
-    day:     ['نهارك سعيد', 'نهارك فل', 'ربنا يسعدك', 'يومك حلو'],
-    evening: ['مساء الفل', 'مساء العسل', 'مساء الخير', 'مساء النور عليك'],
-    night:   ['تصبح على خير', 'ليلتك سعيدة', 'ربنا يريّحك', 'نوم الهنا'],
-  },
-  sham: {
-    morning: ['صباحو', 'يسعد صباحك', 'صباح الياسمين', 'صباح الخير'],
-    day:     ['نهارك عسل', 'يسعد أوقاتك', 'نهارك سعيد', 'الله يحميك'],
-    evening: ['يسعد مساك', 'مساء الياسمين', 'مساء الخير', 'يسعد سهرتك'],
-    night:   ['تصبح على ألف خير', 'ليلتك هنيّة', 'الله يريّحك', 'نوم العوافي'],
-  },
-  maghreb: {
-    morning: ['صباح الخير عليك', 'صباح النور والسرور', 'صباحك مبروك', 'صباح الخير'],
-    day:     ['نهارك زين', 'نهارك مبروك', 'الله يعاونك', 'يومك زين'],
-    evening: ['مساء الخير عليك', 'مساؤك زين', 'مساء النور', 'الله يمسيك بخير'],
-    night:   ['ليلتك زينة', 'تصبح على خير', 'الله يريّحك', 'ليلة سعيدة'],
+  /* الدارجة — دعاء بلسان يومي، يجمع الخليجي والمصري والشامي
+     والمغاربي في مجموعة واحدة تتناوب */
+  darija: {
+    morning: ['صبّحك الله بالخير', 'ربنا يصبّحك بالخير'],
+    day:     ['حيّاك الله', 'الله يبارك بيومك'],
+    evening: ['مسّاك الله بالخير', 'ربنا يمسّيك بالخير'],
+    night:   ['الله يمسيك بخير', 'الله يسعد ليلتك'],
   },
 };
 function currentDialect() {
-  try { return localStorage.getItem('sila:dialect') || 'fusha'; } catch (e) { return 'fusha'; }
+  try {
+    var k = localStorage.getItem('sila:dialect') || 'fusha';
+    /* اللهجات الثلاث القديمة اندمجت في مجموعة واحدة */
+    if (k === 'egypt' || k === 'sham' || k === 'maghreb' || k === 'arabic' || k === 'gulf') k = 'darija';
+    return GREETINGS[k] ? k : 'fusha';
+  } catch (e) { return 'fusha'; }
 }
 function applyDialect(key) {
   try { localStorage.setItem('sila:dialect', key); } catch (e) { /* تجاهل بيئات التخزين المقيّدة */ }
@@ -5056,7 +5045,7 @@ function settingsTabContent(tab, settings) {
             return (
               '<button type="button" class="v2-theme-swatch' + (isActive ? ' is-active' : '') + '" data-theme-key="' + opt.key + '">' +
                 '<span class="v2-theme-preview" style="background:' + opt.bg + '"><span style="background:' + opt.accent + '"></span><span class="v2-theme-check">✓</span></span>' +
-                '<span>' + label + (isActive ? ' <b class="v2-theme-active-tag">' + t('active_now_tag') + '</b>' : '') + '</span>' +
+                '<span>' + label + '</span>' +
               '</button>'
             );
           }).join('') +
