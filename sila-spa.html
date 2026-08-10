@@ -1235,8 +1235,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hs2-greet {
   position: relative;
   z-index: 1;
-  padding: 12px 20px 2px;
+  padding: 12px 20px 6px;
   padding-left: 58px;
+  overflow: visible;
 }
 .hs2-logo-icon {
   display: block;
@@ -1247,13 +1248,17 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hs2-greet-line {
   font-size: 11.5px;
   font-weight: 600;
+  line-height: 1.6;
   color: var(--text-on-bg-muted);
   margin-bottom: 1px;
 }
 .hs2-title {
   font-size: 20px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: normal;
+  line-height: 1.65;
+  padding-bottom: 3px;
+  overflow: visible;
   color: var(--text-on-bg);
 }
 
@@ -2475,6 +2480,9 @@ const TRANSLATIONS = {
     hero_whatsapp: 'راسله بدفء',
     search_no_results: 'لا يوجد أحد بهذا الاسم بدائرتك.',
     language_label: 'اللغة',
+    dialect_label: 'لهجة التحية',
+    dialect_hint: 'التحية التي تستقبلك في الرئيسية — تتغيّر مع ساعات اليوم.',
+    dialect_sample: 'الآن يقول لك:',
     language_ar: 'العربية',
     language_en: 'English',
 
@@ -2723,6 +2731,9 @@ const TRANSLATIONS = {
     hero_whatsapp: 'Send a warm message',
     search_no_results: 'No one with this name in your circle.',
     language_label: 'Language',
+    dialect_label: 'Greeting dialect',
+    dialect_hint: 'The greeting that meets you on the home screen.',
+    dialect_sample: 'Right now it says:',
     language_ar: 'العربية',
     language_en: 'English',
 
@@ -3428,17 +3439,69 @@ function hsIcon(name, size) {
   return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (HS_ICONS[name] || '') + '</svg>';
 }
 
+/* =========================================================
+   بنك التحيات — لهجات لا ترجمات. كل لهجة أربع فترات، والاختيار
+   إعداد صامت في الإعدادات لا سؤال يعترض المستخدم.
+   ========================================================= */
+const GREETING_DIALECTS = [
+  { key: 'fusha',   label: 'الفصحى',    labelEn: 'Standard Arabic' },
+  { key: 'gulf',    label: 'الخليجية',  labelEn: 'Gulf' },
+  { key: 'egypt',   label: 'المصرية',   labelEn: 'Egyptian' },
+  { key: 'sham',    label: 'الشامية',   labelEn: 'Levantine' },
+  { key: 'maghreb', label: 'المغاربية', labelEn: 'Maghrebi' },
+];
+const GREETINGS = {
+  fusha: {
+    morning: ['أسعد الله صباحك', 'صباح الخير', 'صبّحك الله بالخير', 'طاب صباحك'],
+    day:     ['طاب يومك', 'أسعد الله يومك', 'نهارك مبارك', 'حيّاك الله'],
+    evening: ['أسعد الله مساءك', 'مساء الخير', 'مسّاك الله بالخير', 'طاب مساؤك'],
+    night:   ['طابت ليلتك', 'ليلة هانئة', 'أراح الله بالك', 'تصبح على خير'],
+  },
+  gulf: {
+    morning: ['صبّحك الله بالخير', 'صباح السعد', 'صباح الخير', 'هلا والله'],
+    day:     ['حيّاك الله', 'الله يسعد أوقاتك', 'يومك أبيض', 'الله يحفظك'],
+    evening: ['مسّاك الله بالخير', 'الله يسعد مساك', 'مساء السعد', 'مساء الخير'],
+    night:   ['الله يمسيك بخير', 'نوم العافية', 'تصبح على خير', 'أراح الله بالك'],
+  },
+  egypt: {
+    morning: ['صباح الفل', 'صباح القشطة', 'صباح العسل', 'صباح الخير'],
+    day:     ['نهارك سعيد', 'نهارك فل', 'ربنا يسعدك', 'يومك حلو'],
+    evening: ['مساء الفل', 'مساء العسل', 'مساء الخير', 'مساء النور عليك'],
+    night:   ['تصبح على خير', 'ليلتك سعيدة', 'ربنا يريّحك', 'نوم الهنا'],
+  },
+  sham: {
+    morning: ['صباحو', 'يسعد صباحك', 'صباح الياسمين', 'صباح الخير'],
+    day:     ['نهارك عسل', 'يسعد أوقاتك', 'نهارك سعيد', 'الله يحميك'],
+    evening: ['يسعد مساك', 'مساء الياسمين', 'مساء الخير', 'يسعد سهرتك'],
+    night:   ['تصبح على ألف خير', 'ليلتك هنيّة', 'الله يريّحك', 'نوم العوافي'],
+  },
+  maghreb: {
+    morning: ['صباح الخير عليك', 'صباح النور والسرور', 'صباحك مبروك', 'صباح الخير'],
+    day:     ['نهارك زين', 'نهارك مبروك', 'الله يعاونك', 'يومك زين'],
+    evening: ['مساء الخير عليك', 'مساؤك زين', 'مساء النور', 'الله يمسيك بخير'],
+    night:   ['ليلتك زينة', 'تصبح على خير', 'الله يريّحك', 'ليلة سعيدة'],
+  },
+};
+function currentDialect() {
+  try { return localStorage.getItem('sila:dialect') || 'fusha'; } catch (e) { return 'fusha'; }
+}
+function applyDialect(key) {
+  try { localStorage.setItem('sila:dialect', key); } catch (e) { /* تجاهل بيئات التخزين المقيّدة */ }
+}
+
 function hsGreeting() {
+  /* بالإنجليزية نبقى على التحيات المترجمة — اللهجة مفهوم عربي */
+  if (currentLang() === 'en') {
+    const h0 = new Date().getHours();
+    const key = h0 < 12 ? ['greeting_morning', 'greeting_morning2', 'greeting_morning3']
+              : (h0 < 17 ? ['greeting_day', 'greeting_day2']
+              : ['greeting_evening', 'greeting_evening2', 'greeting_evening3']);
+    return t(key[Math.floor(Math.random() * key.length)]);
+  }
   const h = new Date().getHours();
-  const bucket = h < 12 ? 'morning' : (h < 17 ? 'day' : 'evening');
-  const variants = {
-    morning: ['greeting_morning', 'greeting_morning2', 'greeting_morning3'],
-    day: ['greeting_day', 'greeting_day2'],
-    evening: ['greeting_evening', 'greeting_evening2', 'greeting_evening3'],
-  };
-  const options = variants[bucket];
-  const pick = options[Math.floor(Math.random() * options.length)];
-  return t(pick);
+  const bucket = h < 12 ? 'morning' : (h < 17 ? 'day' : (h < 23 ? 'evening' : 'night'));
+  const set = (GREETINGS[currentDialect()] || GREETINGS.fusha)[bucket];
+  return set[Math.floor(Math.random() * set.length)];
 }
 
 /* بيانات كل بطاقة — دالة واحدة تبني القيم، بلا تكرار منطق */
@@ -4924,7 +4987,18 @@ function settingsTabContent(tab, settings) {
           '<button type="button" class="v2-chip' + (currentLang() === 'ar' ? ' is-active' : '') + '" data-lang="ar">' + t('language_ar') + '</button>' +
           '<button type="button" class="v2-chip' + (currentLang() === 'en' ? ' is-active' : '') + '" data-lang="en">' + t('language_en') + '</button>' +
         '</div>' +
-      '</section>'
+      '</section>' +
+      (currentLang() === 'en' ? '' : (
+      '<section class="v2-info-card" style="margin-top:14px">' +
+        '<h2 class="v2-notes-head"><span>' + t('dialect_label') + '</span></h2>' +
+        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('dialect_hint') + '</p>' +
+        '<div class="v2-chip-row" id="dialect-picker">' +
+          GREETING_DIALECTS.map(function (d) {
+            return '<button type="button" class="v2-chip' + (d.key === currentDialect() ? ' is-active' : '') + '" data-dialect="' + d.key + '">' + d.label + '</button>';
+          }).join('') +
+        '</div>' +
+        '<p class="v2-notes-empty" style="margin-top:10px">' + t('dialect_sample') + ' ' + hsGreeting() + '</p>' +
+      '</section>'))
     );
   }
   if (tab === 'categories') {
@@ -5037,6 +5111,13 @@ function renderSettingsPage() {
     if (!chip) return;
     applyLang(chip.dataset.lang);
     hsRenderNavIcons();
+    renderSettingsPage();
+  });
+  const dialectPicker = root.querySelector('#dialect-picker');
+  if (dialectPicker) dialectPicker.addEventListener('click', function (e) {
+    const chip = e.target.closest('.v2-chip');
+    if (!chip) return;
+    applyDialect(chip.dataset.dialect);
     renderSettingsPage();
   });
   const intervalPicker = root.querySelector('#default-interval-picker');
