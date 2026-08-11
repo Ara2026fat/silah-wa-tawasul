@@ -675,7 +675,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   margin-bottom: 12px;
 }
 .v2-chip {
-  padding: 7px 14px;
+  padding: 9px 15px;
+  min-height: 36px;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: var(--surface);
@@ -921,7 +922,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 .v2-settings-tab {
   flex-shrink: 0;
-  padding: 8px 14px;
+  min-height: 36px;
+  padding: 9px 14px;
   border-radius: 999px;
   background: var(--surface);
   color: var(--text-muted);
@@ -1104,8 +1106,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 .v2-toast-close {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1332,10 +1334,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hs2-hero-name { font-size: 10px; font-weight: 800; }
 .hs2-hero-relation { font-size: 8px; color: var(--text-muted); }
 .hs2-hero-sentence { font-size: 10.5px; font-weight: 700; line-height: 1.4; }
-.hs2-hero-actions { display: flex; gap: 5px; }
+.hs2-hero-actions { display: flex; gap: 7px; }
 .hs2-hero-btn {
-  flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
-  padding: 5px; border-radius: 8px; font-size: 9px; font-weight: 700;
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  min-height: 40px; padding: 9px 8px; border-radius: 12px; font-size: 12px; font-weight: 700;
   transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
 }
 .hs2-hero-btn:active { transform: scale(0.95); }
@@ -1515,7 +1517,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   background: linear-gradient(160deg,
     color-mix(in srgb, var(--turquoise) 30%, transparent),
     color-mix(in srgb, var(--turquoise) 9%, transparent));
-  border: 1px solid color-mix(in srgb, var(--turquoise) 38%, transparent);
+  border: 1px solid var(--turquoise);
+  border-color: color-mix(in srgb, var(--turquoise) 38%, transparent);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
   box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--turquoise) 70%, transparent),
               0 1px 0 rgba(255, 255, 255, 0.5) inset;
   opacity: 0;
@@ -1532,6 +1536,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   width: 36px;
   height: 36px;
   border-radius: 13px;
+  background: var(--turquoise);
   background: linear-gradient(160deg, color-mix(in srgb, var(--turquoise) 82%, #fff), var(--turquoise));
   color: #fff;
   display: flex;
@@ -1553,6 +1558,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 
 /* ---------- عدّادات تكوين الشجرة ---------- */
+.tp-section {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--turquoise-text);
+  margin: 16px 0 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.tp-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 .tp-row {
   display: flex;
   align-items: center;
@@ -1599,6 +1613,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   bottom: 10px;
   width: 2px;
   border-radius: 2px;
+  background: var(--turquoise-tint);
   background: linear-gradient(180deg,
     color-mix(in srgb, var(--turquoise) 55%, transparent),
     color-mix(in srgb, var(--turquoise) 10%, transparent));
@@ -1631,6 +1646,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   height: 9px;
   border-radius: 50%;
   background: var(--turquoise);
+  box-shadow: 0 0 0 3px var(--turquoise-tint);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--turquoise) 20%, transparent);
 }
 .fb-label { grid-column: 1 / -1; font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
@@ -2201,46 +2217,10 @@ html[data-theme="night"] {
       </div>
 
       <!-- مراجعة جماعية (VCF/لصق متعدد) -->
-      <!-- شجرة أسرتي — إدخال واحد يبني الفروع كلها -->
+      <!-- شجرة الأقارب — لوحة واحدة تخدم شجرة الأسرة وشجرة الأقارب -->
       <div id="family-builder" class="v2-panel" hidden>
-        <p class="v2-panel-hint">شجرتك تبدأ من والديك، ثم تتفرّع منك. أدخِل من تشاء واترك الباقي فارغًا.</p>
-
-        <div class="ft-branch" data-branch="roots">
-          <h3 class="ft-branch-title">الجذر — والداي</h3>
-          <div class="ft-rows" id="ft-roots"></div>
-        </div>
-
-        <div class="ft-branch" data-branch="siblings">
-          <h3 class="ft-branch-title">الفرع الأول — إخوتي وأخواتي</h3>
-          <div class="ft-rows" id="ft-siblings"></div>
-          <div class="fb-add-row">
-            <button type="button" class="fb-addbtn" data-add="brother">＋ أخ</button>
-            <button type="button" class="fb-addbtn" data-add="sister">＋ أخت</button>
-          </div>
-        </div>
-
-        <div class="ft-branch" data-branch="mine">
-          <h3 class="ft-branch-title">الفرع الثاني — أسرتي</h3>
-          <div class="v2-field">
-            <label>الزوج أم الزوجة؟</label>
-            <div class="v2-chip-row" id="fb-spouse-picker">
-              <button type="button" class="v2-chip" data-spouse="wife">زوجتي</button>
-              <button type="button" class="v2-chip" data-spouse="husband">زوجي</button>
-              <button type="button" class="v2-chip" data-spouse="none">لا يوجد</button>
-            </div>
-          </div>
-          <div class="ft-rows" id="ft-mine"></div>
-          <div class="fb-add-row">
-            <button type="button" class="fb-addbtn" data-add="son">＋ ابن</button>
-            <button type="button" class="fb-addbtn" data-add="daughter">＋ ابنة</button>
-          </div>
-        </div>
-
-        <div class="ft-branch" data-branch="inlaws" id="ft-inlaws-branch">
-          <h3 class="ft-branch-title" id="ft-inlaws-title">فرع متفرّع — والدا الزوجة</h3>
-          <div class="ft-rows" id="ft-inlaws"></div>
-        </div>
-
+        <p class="v2-panel-hint" id="ft-hint"></p>
+        <div id="ft-branches"></div>
         <button type="button" class="v2-submit-btn" id="fb-next-btn">احفظ الشجرة كاملة</button>
       </div>
 
@@ -2497,8 +2477,14 @@ const TRANSLATIONS = {
     settings_tab_tree: 'شجرتي',
     settings_tab_data: 'البيانات',
     tree_plan_label: 'تكوين شجرتي',
-    tree_plan_hint: 'حدّد العدد فقط. عند فتح «عائلتي» من زر الإضافة تظهر لك الخانات جاهزة بالأسماء.',
+    tree_plan_hint: 'حدّد العدد فقط. عند فتح «عائلتي» أو «أقاربي» من زر الإضافة تظهر الخانات جاهزة للأسماء.',
     tree_plan_saved: 'حُفظ تكوين الشجرة',
+    storage_failed: 'تعذّر الحفظ على جهازك. لو كنت بوضع التصفّح الخاص، اخرج منه وأعد المحاولة.',
+    support_label: 'تواصل مع المطوّر',
+    support_desc: 'لاحظت خللًا أو عندك اقتراح؟ راسلني مباشرة.',
+    support_btn: 'راسلني على واتساب',
+    pick_category_title: 'ابدأ باختيار الفئة',
+    pick_category_hint: 'اختر الفئة، ثم أضف من تعرفهم إليها.',
     dialect_label: 'لهجة التحية',
     dialect_hint: 'التحية التي تستقبلك في الرئيسية — تتغيّر مع ساعات اليوم.',
     dialect_sample: 'الآن يقول لك:',
@@ -2755,6 +2741,12 @@ const TRANSLATIONS = {
     tree_plan_label: 'My family tree setup',
     tree_plan_hint: 'Set the counts only. Opening "My family" from Add shows the slots ready.',
     tree_plan_saved: 'Tree setup saved',
+    storage_failed: 'Could not save on your device. If you are in private browsing, exit it and try again.',
+    support_label: 'Contact the developer',
+    support_desc: 'Found a problem or have a suggestion? Message me directly.',
+    support_btn: 'Message me on WhatsApp',
+    pick_category_title: 'Start by picking a circle',
+    pick_category_hint: 'Pick a circle, then add the people you know to it.',
     dialect_label: 'Greeting dialect',
     dialect_hint: 'The greeting that meets you on the home screen.',
     dialect_sample: 'Right now it says:',
@@ -3008,6 +3000,8 @@ const RELATION_GENDER = {
   grandfather: 'm', grandmother: 'f', grandson: 'm', granddaughter: 'f',
   uncle_paternal: 'm', aunt_paternal: 'f', uncle_maternal: 'm', aunt_maternal: 'f',
   cousin_uncle: 'm', cousin_uncle_mat: 'm', cousin_aunt_mat: 'm', cousin_aunt_pat: 'm',
+  cousin_uncle_f: 'f', cousin_uncle_mat_f: 'f', cousin_aunt_mat_f: 'f', cousin_aunt_pat_f: 'f',
+  niece_brother: 'f', niece_sister: 'f',
   nephew_brother: 'm', nephew_sister: 'm',
   relative_general: 'm',
   friend: 'm', close_friend: 'm', coworker: 'm',
@@ -3046,6 +3040,12 @@ const RELATION_TYPES = {
   uncle_maternal: { label: 'خال',  category: 'relatives', onboardingCount: true, countQuestion: 'كم عدد أخوالك؟' },
   aunt_maternal:  { label: 'خالة', category: 'relatives', onboardingCount: true, countQuestion: 'كم عدد خالاتك؟' },
   cousin_uncle:        { label: 'ابن عم',   category: 'relatives' },
+  cousin_uncle_f:      { label: 'بنت عم',   category: 'relatives' },
+  cousin_uncle_mat_f:  { label: 'بنت خال',  category: 'relatives' },
+  cousin_aunt_mat_f:   { label: 'بنت خالة', category: 'relatives' },
+  cousin_aunt_pat_f:   { label: 'بنت عمة',  category: 'relatives' },
+  niece_brother:       { label: 'بنت الأخ',  category: 'relatives' },
+  niece_sister:        { label: 'بنت الأخت', category: 'relatives' },
   cousin_uncle_mat:    { label: 'ابن خال',  category: 'relatives' },
   cousin_aunt_mat:     { label: 'ابن خالة', category: 'relatives' },
   cousin_aunt_pat:     { label: 'ابن عمة',  category: 'relatives' },
@@ -3191,6 +3191,10 @@ function writeJson(key, value) {
     return true;
   } catch (e) {
     console.error('تعذّر الحفظ محليًا', key, e);
+    /* الفشل الصامت أخطر من العطل: بالتصفّح الخاص على آيفون أو عند
+       امتلاء التخزين يضيف المستخدم أشخاصًا ولا يُحفظ شيء بلا أي
+       إشارة. نُخبره صراحة. */
+    try { if (typeof toast === 'function') toast(t('storage_failed'), 'warning', { duration: 8000 }); } catch (e2) { /* تجاهل */ }
     return false;
   }
 }
@@ -3943,32 +3947,43 @@ function initSmartAdd() {
   const otherToggle = document.getElementById('other-ways-toggle');
   const bulkImportSupported = 'contacts' in navigator && 'ContactsManager' in window;
 
-  if (bulkImportSupported) {
-    importHero.hidden = false;
-    document.getElementById('category-picker').addEventListener('click', function (e) {
-      const chip = e.target.closest('.v2-category-icon-btn');
-      if (!chip) return;
-      /* الأسرة ليست قائمة أسماء — لها أدوار معروفة. نفتح بانيَ الأدوار
-         بدل القفز مباشرة لدفتر الهاتف. */
-      if (chip.dataset.cat === 'family') { showFamilyBuilder(); return; }
-      navigator.contacts.select(['name', 'tel'], { multiple: true })
-        .then(function (contacts) {
-          if (!contacts || !contacts.length) return;
-          const people = contacts.map(function (c) {
-            return {
-              name: c.name && c.name[0] ? c.name[0] : '',
-              phone: c.tel && c.tel[0] ? c.tel[0] : '',
-              relationType: chip.dataset.rel,
-            };
-          }).filter(function (p) { return p.name; });
-          if (!people.length) return;
-          showBulkReview(people);
-        })
-        .catch(function () { /* المستخدم ألغى الاختيار */ });
-    });
-  } else {
-    /* بلا دعم المتصفح لاختيار عدة جهات اتصال — لا نعرض بطاقة
-       لا تعمل، نكشف الطرق الأخرى مباشرة بدل ما تكون خيارًا وحيدًا مخفيًا */
+  /* بطاقة اختيار الفئة تظهر دائمًا — وليس فقط حين يدعم المتصفح
+     اختيار عدة جهات اتصال. كانت مربوطة بالدعم، فيختفي معها بانيَ
+     الشجرة كليًا على الآيفون وسطح المكتب. الاستيراد الجماعي وحده
+     هو المشروط بالدعم، لا الشاشة كلها. */
+  importHero.hidden = false;
+  if (!bulkImportSupported) {
+    document.getElementById('import-hero-title').textContent = t('pick_category_title');
+    document.getElementById('import-hero-hint').textContent = t('pick_category_hint');
+  }
+  document.getElementById('category-picker').addEventListener('click', function (e) {
+    const chip = e.target.closest('.v2-category-icon-btn');
+    if (!chip) return;
+    /* الأسرة ليست قائمة أسماء — لها أدوار معروفة. نفتح بانيَ الأدوار
+       بدل القفز مباشرة لدفتر الهاتف. */
+    if (chip.dataset.cat === 'family') { showFamilyBuilder(); return; }
+    if (chip.dataset.cat === 'relatives') { showRelativesBuilder(); return; }
+    if (!bulkImportSupported) {
+      /* بلا دعم دفتر الاتصال: نفتح النموذج اليدوي بالقرابة جاهزة */
+      showFormWithData({ name: '', phone: '', relationType: chip.dataset.rel });
+      return;
+    }
+    navigator.contacts.select(['name', 'tel'], { multiple: true })
+      .then(function (contacts) {
+        if (!contacts || !contacts.length) return;
+        const people = contacts.map(function (c) {
+          return {
+            name: c.name && c.name[0] ? c.name[0] : '',
+            phone: c.tel && c.tel[0] ? c.tel[0] : '',
+            relationType: chip.dataset.rel,
+          };
+        }).filter(function (p) { return p.name; });
+        if (!people.length) return;
+        showBulkReview(people);
+      })
+      .catch(function () { /* المستخدم ألغى الاختيار */ });
+  });
+  if (!bulkImportSupported) {
     methodsGrid.hidden = false;
     otherToggle.hidden = true;
   }
@@ -3997,24 +4012,81 @@ function initSmartAdd() {
     document.getElementById('f-name').focus();
   }
 
-  /* ---------- شجرة أسرتي ----------
-     شاشة إدخال واحدة على هيئة شجرة: الجذر (الوالدان) ← الفرع الأول
-     (الإخوة) ← الفرع الثاني (الزوجة والأبناء) ← فرع متفرّع (والدا
-     الزوجة). الأدوار معروفة سلفًا، لذلك نحفظ مباشرة بلا مرحلة
-     تخمين للقرابة. */
-  var ftState = {
-    father: { name: '', phone: '', dead: false },
-    mother: { name: '', phone: '', dead: false },
-    brother: [], sister: [],
-    spouseType: 'none',
-    spouse: { name: '', phone: '', dead: false },
-    son: [], daughter: [],
-    father_in_law: { name: '', phone: '', dead: false },
-    mother_in_law: { name: '', phone: '', dead: false }
+  /* ---------- شجرة الأقارب ----------
+     محرّك واحد يخدم شجرتين: شجرة الأسرة (الوالدان ← الإخوة ← أسرتي ←
+     الأحفاد ← أهل الزوجة) وشجرة الأقارب (الأجداد ← فرع الأب ← فرع الأم
+     ← أبناء الإخوة). الأدوار معروفة سلفًا فنحفظ مباشرة بلا تخمين. */
+  var TREE_SPECS = {
+    family: {
+      title: 'شجرة أسرتي',
+      hint: 'شجرتك تبدأ من والديك، ثم تتفرّع منك. أدخِل من تشاء واترك الباقي فارغًا.',
+      branches: [
+        { title: 'الجذر — والداي',
+          roles: [{ role: 'father', label: 'أبي' }, { role: 'mother', label: 'أمي' }] },
+        { title: 'الفرع الأول — إخوتي وأخواتي',
+          roles: [{ role: 'brother', label: 'أخي', multi: true }, { role: 'sister', label: 'أختي', multi: true }],
+          adds: [['brother', '＋ أخ'], ['sister', '＋ أخت']] },
+        { title: 'الفرع الثاني — أسرتي', spousePicker: true,
+          roles: [{ role: 'spouse', label: 'زوجتي' }, { role: 'son', label: 'ابني', multi: true }, { role: 'daughter', label: 'ابنتي', multi: true }],
+          adds: [['son', '＋ ابن'], ['daughter', '＋ ابنة']] },
+        { title: 'الفرع الثالث — أحفادي',
+          roles: [{ role: 'grandson', label: 'حفيدي', multi: true }, { role: 'granddaughter', label: 'حفيدتي', multi: true }],
+          adds: [['grandson', '＋ حفيد'], ['granddaughter', '＋ حفيدة']] },
+        { title: 'فرع متفرّع — والدا الزوجة', requiresSpouse: true,
+          roles: [{ role: 'father_in_law', label: 'والد الزوجة' }, { role: 'mother_in_law', label: 'والدة الزوجة' }] },
+      ]
+    },
+    relatives: {
+      title: 'شجرة أقاربي',
+      hint: 'أقاربك فرعان: فرع أبيك وفرع أمك. أدخِل من تشاء واترك الباقي فارغًا.',
+      branches: [
+        { title: 'الجذر — أجدادي',
+          roles: [{ role: 'grandfather', label: 'جدي', multi: true }, { role: 'grandmother', label: 'جدتي', multi: true }],
+          adds: [['grandfather', '＋ جد'], ['grandmother', '＋ جدة']] },
+        { title: 'فرع أبي — أعمامي وعمّاتي',
+          roles: [{ role: 'uncle_paternal', label: 'عمي', multi: true }, { role: 'aunt_paternal', label: 'عمتي', multi: true }],
+          adds: [['uncle_paternal', '＋ عم'], ['aunt_paternal', '＋ عمة']] },
+        { title: 'يتفرّع منه — أبناء العم والعمة',
+          roles: [{ role: 'cousin_uncle', label: 'ابن عمي', multi: true }, { role: 'cousin_uncle_f', label: 'بنت عمي', multi: true },
+                  { role: 'cousin_aunt_pat', label: 'ابن عمتي', multi: true }, { role: 'cousin_aunt_pat_f', label: 'بنت عمتي', multi: true }],
+          adds: [['cousin_uncle', '＋ ابن عم'], ['cousin_uncle_f', '＋ بنت عم'], ['cousin_aunt_pat', '＋ ابن عمة'], ['cousin_aunt_pat_f', '＋ بنت عمة']] },
+        { title: 'فرع أمي — أخوالي وخالاتي',
+          roles: [{ role: 'uncle_maternal', label: 'خالي', multi: true }, { role: 'aunt_maternal', label: 'خالتي', multi: true }],
+          adds: [['uncle_maternal', '＋ خال'], ['aunt_maternal', '＋ خالة']] },
+        { title: 'يتفرّع منه — أبناء الخال والخالة',
+          roles: [{ role: 'cousin_uncle_mat', label: 'ابن خالي', multi: true }, { role: 'cousin_uncle_mat_f', label: 'بنت خالي', multi: true },
+                  { role: 'cousin_aunt_mat', label: 'ابن خالتي', multi: true }, { role: 'cousin_aunt_mat_f', label: 'بنت خالتي', multi: true }],
+          adds: [['cousin_uncle_mat', '＋ ابن خال'], ['cousin_uncle_mat_f', '＋ بنت خال'], ['cousin_aunt_mat', '＋ ابن خالة'], ['cousin_aunt_mat_f', '＋ بنت خالة']] },
+        { title: 'فرع إخوتي — أبناؤهم',
+          roles: [{ role: 'nephew_brother', label: 'ابن أخي', multi: true }, { role: 'niece_brother', label: 'بنت أخي', multi: true },
+                  { role: 'nephew_sister', label: 'ابن أختي', multi: true }, { role: 'niece_sister', label: 'بنت أختي', multi: true }],
+          adds: [['nephew_brother', '＋ ابن أخ'], ['niece_brother', '＋ بنت أخ'], ['nephew_sister', '＋ ابن أخت'], ['niece_sister', '＋ بنت أخت']] },
+      ]
+    }
   };
-  var ftRepeatable = { brother: 1, sister: 1, son: 1, daughter: 1 };
-  var ftSeeded = false, ftShowFather = true, ftShowMother = true, ftShowInlaws = true;
+
+  var ftMode = 'family';
+  var ftState = { spouseType: 'none' };
+  var ftSeeded = { family: false, relatives: false };
   var ftCanImport = ('contacts' in navigator && 'ContactsManager' in window);
+  var ftBlank = function () { return { name: '', phone: '', dead: false }; };
+
+  function ftIsMulti(role) {
+    var out = false;
+    TREE_SPECS[ftMode].branches.forEach(function (b) {
+      b.roles.forEach(function (r) { if (r.role === role && r.multi) out = true; });
+    });
+    return out;
+  }
+
+  /* أهل الزوجة والزوج يتبدّل وصفهما مع اختيار الزوج/الزوجة */
+  function ftLabel(role, base) {
+    if (role === 'spouse') return ftState.spouseType === 'husband' ? 'زوجي' : 'زوجتي';
+    var isWife = ftState.spouseType !== 'husband';
+    if (role === 'father_in_law') return isWife ? 'والد الزوجة' : 'والد الزوج';
+    if (role === 'mother_in_law') return isWife ? 'والدة الزوجة' : 'والدة الزوج';
+    return base;
+  }
 
   function ftRowHtml(role, label, data, index) {
     var idx = (typeof index === 'number') ? index : '';
@@ -4029,144 +4101,150 @@ function initSmartAdd() {
         '</div>' +
         '<div class="fb-actions">' +
           (ftCanImport ? '<button type="button" class="fb-import" aria-label="اختر من جهات الاتصال">👤</button>' : '') +
-          (ftRepeatable[role] ? '<button type="button" class="fb-remove" aria-label="حذف">×</button>' : '') +
+          (ftIsMulti(role) ? '<button type="button" class="fb-remove" aria-label="حذف">×</button>' : '') +
         '</div>' +
       '</div>'
     );
   }
 
-  function ftReadRow(row) {
-    return {
-      name: row.querySelector('.fb-name').value,
-      phone: row.querySelector('.fb-phone').value,
-      dead: row.querySelector('.fb-dead').checked
-    };
-  }
-
   /* نقرأ كل ما كُتب قبل أي إعادة رسم، وإلا ضاع ما أدخله المستخدم */
   function ftCollect() {
-    var rows = document.querySelectorAll('#family-builder .ft-row');
+    var rows = document.querySelectorAll('#ft-branches .ft-row');
     if (!rows.length) return;
-    ftState.brother = []; ftState.sister = []; ftState.son = []; ftState.daughter = [];
+    var multis = {};
     Array.prototype.forEach.call(rows, function (row) {
-      var role = row.dataset.role, data = ftReadRow(row);
-      if (ftRepeatable[role]) ftState[role].push(data);
-      else ftState[role] = data;
+      var role = row.dataset.role;
+      var data = {
+        name: row.querySelector('.fb-name').value,
+        phone: row.querySelector('.fb-phone').value,
+        dead: row.querySelector('.fb-dead').checked
+      };
+      if (ftIsMulti(role)) {
+        if (!multis[role]) multis[role] = [];
+        multis[role].push(data);
+      } else {
+        ftState[role] = data;
+      }
     });
+    Object.keys(multis).forEach(function (role) { ftState[role] = multis[role]; });
   }
 
   function ftRender() {
-    document.getElementById('ft-roots').innerHTML =
-      (ftShowFather ? ftRowHtml('father', 'أبي', ftState.father) : '') +
-      (ftShowMother ? ftRowHtml('mother', 'أمي', ftState.mother) : '');
-
-    var sib = '';
-    ftState.brother.forEach(function (d, i) { sib += ftRowHtml('brother', 'أخي ' + toArabicDigits(i + 1), d, i); });
-    ftState.sister.forEach(function (d, i) { sib += ftRowHtml('sister', 'أختي ' + toArabicDigits(i + 1), d, i); });
-    document.getElementById('ft-siblings').innerHTML = sib;
-
-    var mine = '';
-    if (ftState.spouseType !== 'none') {
-      mine += ftRowHtml('spouse', ftState.spouseType === 'wife' ? 'زوجتي' : 'زوجي', ftState.spouse);
-    }
-    ftState.son.forEach(function (d, i) { mine += ftRowHtml('son', 'ابني ' + toArabicDigits(i + 1), d, i); });
-    ftState.daughter.forEach(function (d, i) { mine += ftRowHtml('daughter', 'ابنتي ' + toArabicDigits(i + 1), d, i); });
-    document.getElementById('ft-mine').innerHTML = mine;
-
-    /* فرع أهل الزوجة لا معنى له بلا زوج/زوجة — نخفيه بدل أن نعرض
-       حقلين معلّقين في الهواء */
-    var inlawBranch = document.getElementById('ft-inlaws-branch');
-    if (ftState.spouseType === 'none' || !ftShowInlaws) {
-      inlawBranch.hidden = true;
-      document.getElementById('ft-inlaws').innerHTML = '';
-    } else {
-      inlawBranch.hidden = false;
-      document.getElementById('ft-inlaws-title').textContent =
-        ftState.spouseType === 'wife' ? 'فرع متفرّع — والدا الزوجة' : 'فرع متفرّع — والدا الزوج';
-      document.getElementById('ft-inlaws').innerHTML =
-        ftRowHtml('father_in_law', ftState.spouseType === 'wife' ? 'والد الزوجة' : 'والد الزوج', ftState.father_in_law) +
-        ftRowHtml('mother_in_law', ftState.spouseType === 'wife' ? 'والدة الزوجة' : 'والدة الزوج', ftState.mother_in_law);
-    }
-
-    var host = document.getElementById('family-builder');
-    Array.prototype.forEach.call(host.querySelectorAll('.fb-remove'), function (btn) {
-      btn.addEventListener('click', function () {
-        var row = btn.closest('.ft-row');
-        var role = row.dataset.role, i = parseInt(row.dataset.index, 10);
-        ftCollect();
-        ftState[role].splice(i, 1);
-        ftRender();
+    var spec = TREE_SPECS[ftMode];
+    document.getElementById('ft-hint').textContent = spec.hint;
+    var html = '';
+    spec.branches.forEach(function (br, bi) {
+      /* فرع أهل الزوجة لا معنى له بلا زوج/زوجة — نطويه بدل عرض
+         حقلين معلّقين في الهواء */
+      if (br.requiresSpouse && ftState.spouseType === 'none') return;
+      var rows = '';
+      br.roles.forEach(function (r) {
+        if (r.role === 'spouse' && ftState.spouseType === 'none') return;
+        if (r.multi) {
+          (ftState[r.role] || []).forEach(function (d, i) {
+            rows += ftRowHtml(r.role, ftLabel(r.role, r.label) + ' ' + toArabicDigits(i + 1), d, i);
+          });
+        } else {
+          rows += ftRowHtml(r.role, ftLabel(r.role, r.label), ftState[r.role] || ftBlank());
+        }
       });
+      var adds = '';
+      if (br.adds) {
+        adds = '<div class="fb-add-row">' + br.adds.map(function (a) {
+          return '<button type="button" class="fb-addbtn" data-add="' + a[0] + '">' + a[1] + '</button>';
+        }).join('') + '</div>';
+      }
+      var picker = '';
+      if (br.spousePicker) {
+        picker = '<div class="v2-field"><label>الزوج أم الزوجة؟</label>' +
+          '<div class="v2-chip-row" id="fb-spouse-picker">' +
+            ['wife', 'husband', 'none'].map(function (k) {
+              var lbl = k === 'wife' ? 'زوجتي' : (k === 'husband' ? 'زوجي' : 'لا يوجد');
+              return '<button type="button" class="v2-chip' + (ftState.spouseType === k ? ' is-active' : '') + '" data-spouse="' + k + '">' + lbl + '</button>';
+            }).join('') +
+          '</div></div>';
+      }
+      html += '<div class="ft-branch" data-branch="' + bi + '">' +
+                '<h3 class="ft-branch-title">' + ftLabelBranch(br) + '</h3>' +
+                picker + '<div class="ft-rows">' + rows + '</div>' + adds +
+              '</div>';
     });
-    Array.prototype.forEach.call(host.querySelectorAll('.fb-import'), function (btn) {
-      btn.addEventListener('click', function () {
-        var row = btn.closest('.ft-row');
-        navigator.contacts.select(['name', 'tel'], { multiple: false })
-          .then(function (contacts) {
-            if (!contacts || !contacts.length) return;
-            var c = contacts[0];
-            row.querySelector('.fb-name').value = (c.name && c.name[0]) ? c.name[0] : '';
-            row.querySelector('.fb-phone').value = (c.tel && c.tel[0]) ? c.tel[0] : '';
-          })
-          .catch(function () { /* المستخدم ألغى */ });
-      });
-    });
+    document.getElementById('ft-branches').innerHTML = html;
   }
 
-  function ftSyncSpouseChips() {
-    var picker = document.getElementById('fb-spouse-picker');
-    Array.prototype.forEach.call(picker.querySelectorAll('.v2-chip'), function (c) {
-      c.classList.toggle('is-active', c.dataset.spouse === ftState.spouseType);
-    });
+  function ftLabelBranch(br) {
+    if (br.requiresSpouse) return ftState.spouseType === 'husband' ? 'فرع متفرّع — والدا الزوج' : 'فرع متفرّع — والدا الزوجة';
+    return br.title;
   }
 
-  function showFamilyBuilder() {
+  function ftSeed(mode) {
+    var plan = (typeof getTreePlan === 'function') ? getTreePlan() : {};
+    var fill = function (n) { var a = []; for (var i = 0; i < (n || 0); i++) a.push(ftBlank()); return a; };
+    TREE_SPECS[mode].branches.forEach(function (br) {
+      br.roles.forEach(function (r) {
+        if (r.multi) ftState[r.role] = fill(plan[r.role]);
+        else if (!ftState[r.role]) ftState[r.role] = ftBlank();
+      });
+    });
+    if (mode === 'family') {
+      if (plan.spouse > 0 && ftState.spouseType === 'none') ftState.spouseType = 'wife';
+      if (plan.spouse === 0) ftState.spouseType = 'none';
+    }
+    ftSeeded[mode] = true;
+  }
+
+  function showTreeBuilder(mode) {
+    ftMode = mode;
     hideAllExceptGrid();
     methodsGrid.hidden = true;
     document.getElementById('import-hero').hidden = true;
     document.getElementById('other-ways-toggle').hidden = true;
     document.getElementById('family-builder').hidden = false;
-    /* الخانات تُبنى من تكوين الشجرة المحفوظ في الإعدادات، فلا يعيد
-       المستخدم تحديد الأعداد في كل مرة */
-    if (!ftSeeded) {
-      var plan = (typeof getTreePlan === 'function') ? getTreePlan() : {};
-      var blank = function () { return { name: '', phone: '', dead: false }; };
-      var fill = function (n) { var a = []; for (var i = 0; i < (n || 0); i++) a.push(blank()); return a; };
-      ftState.brother = fill(plan.brother);
-      ftState.sister = fill(plan.sister);
-      ftState.son = fill(plan.son);
-      ftState.daughter = fill(plan.daughter);
-      if (plan.spouse > 0 && ftState.spouseType === 'none') ftState.spouseType = 'wife';
-      if (plan.spouse === 0) ftState.spouseType = 'none';
-      ftShowFather = plan.father !== 0;
-      ftShowMother = plan.mother !== 0;
-      ftShowInlaws = plan.inlaws !== 0;
-      ftSeeded = true;
-    }
-    ftSyncSpouseChips();
+    if (!ftSeeded[mode]) ftSeed(mode);
     ftRender();
   }
-
-  var fbPicker = document.getElementById('fb-spouse-picker');
-  if (fbPicker) {
-    fbPicker.addEventListener('click', function (e) {
-      var chip = e.target.closest('.v2-chip');
-      if (!chip) return;
-      ftCollect();
-      ftState.spouseType = chip.dataset.spouse;
-      ftSyncSpouseChips();
-      ftRender();
-    });
-  }
+  function showFamilyBuilder() { showTreeBuilder('family'); }
+  function showRelativesBuilder() { showTreeBuilder('relatives'); }
 
   var fbPanel = document.getElementById('family-builder');
   if (fbPanel) {
     fbPanel.addEventListener('click', function (e) {
-      var btn = e.target.closest('.fb-addbtn');
-      if (!btn) return;
-      ftCollect();
-      ftState[btn.dataset.add].push({ name: '', phone: '', dead: false });
-      ftRender();
+      var add = e.target.closest('.fb-addbtn');
+      if (add) {
+        ftCollect();
+        if (!ftState[add.dataset.add]) ftState[add.dataset.add] = [];
+        ftState[add.dataset.add].push(ftBlank());
+        ftRender();
+        return;
+      }
+      var chip = e.target.closest('#fb-spouse-picker .v2-chip');
+      if (chip) {
+        ftCollect();
+        ftState.spouseType = chip.dataset.spouse;
+        ftRender();
+        return;
+      }
+      var rm = e.target.closest('.fb-remove');
+      if (rm) {
+        var row = rm.closest('.ft-row');
+        var role = row.dataset.role, i = parseInt(row.dataset.index, 10);
+        ftCollect();
+        ftState[role].splice(i, 1);
+        ftRender();
+        return;
+      }
+      var imp = e.target.closest('.fb-import');
+      if (imp) {
+        var r2 = imp.closest('.ft-row');
+        navigator.contacts.select(['name', 'tel'], { multiple: false })
+          .then(function (contacts) {
+            if (!contacts || !contacts.length) return;
+            var c = contacts[0];
+            r2.querySelector('.fb-name').value = (c.name && c.name[0]) ? c.name[0] : '';
+            r2.querySelector('.fb-phone').value = (c.tel && c.tel[0]) ? c.tel[0] : '';
+          })
+          .catch(function () { /* المستخدم ألغى */ });
+      }
     });
   }
 
@@ -4180,15 +4258,17 @@ function initSmartAdd() {
           planned.push({ name: data.name.trim(), phone: (data.phone || '').trim(), dead: !!data.dead, relationType: relationType });
         }
       }
-      push(ftState.father, 'father');
-      push(ftState.mother, 'mother');
-      ftState.brother.forEach(function (d) { push(d, 'brother'); });
-      ftState.sister.forEach(function (d) { push(d, 'sister'); });
-      if (ftState.spouseType !== 'none') {
-        push(ftState.spouse, ftState.spouseType);
-        push(ftState.father_in_law, 'father_in_law');
-        push(ftState.mother_in_law, 'mother_in_law');
-      }
+      TREE_SPECS[ftMode].branches.forEach(function (br) {
+        if (br.requiresSpouse && ftState.spouseType === 'none') return;
+        br.roles.forEach(function (r) {
+          if (r.role === 'spouse') {
+            if (ftState.spouseType !== 'none') push(ftState.spouse, ftState.spouseType);
+            return;
+          }
+          if (r.multi) (ftState[r.role] || []).forEach(function (d) { push(d, r.role); });
+          else push(ftState[r.role], r.role);
+        });
+      });
       if (!planned.length) { toast('اكتب اسمًا واحدًا على الأقل.', 'info'); return; }
       planned.forEach(function (p) {
         PeopleRepo.create({
@@ -4291,6 +4371,9 @@ function initSmartAdd() {
   });
 
   /* ---------- أمر صوتي ---------- */
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) {
+    document.getElementById('method-voice').hidden = true;
+  }
   document.getElementById('method-voice').addEventListener('click', function () {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -4353,6 +4436,12 @@ function initSmartAdd() {
       .catch(function () {
         statusEl.textContent = t('ocr_error');
       });
+  }
+  /* القراءة الضوئية تحتاج مكتبة Tesseract وهي غير مضمّنة في الملف
+     الواحد — فبدل أن يضغط المستخدم فيجد رسالة فشل، نخفي الزرّين. */
+  if (typeof Tesseract === 'undefined') {
+    document.getElementById('method-photo').hidden = true;
+    document.getElementById('method-card').hidden = true;
   }
   document.getElementById('method-photo').addEventListener('click', function () { document.getElementById('photo-input').click(); });
   document.getElementById('photo-input').addEventListener('change', function (e) { if (e.target.files[0]) runOcr(e.target.files[0]); });
@@ -4897,6 +4986,18 @@ function currentTheme() {
 /* نسخة احتياطية — تصدير كل بيانات sila: كملف JSON يقدر المستخدم
    يحتفظ فيه ويرجّعه لاحقًا. أهم شبكة أمان قبل الإطلاق العام، لأن
    كل البيانات تعيش محليًا بالمتصفح بلا أي خادم مركزي. */
+/* رابط دعم واتساب — نرفق مع الرسالة بصمة موجزة للجهاز والمتصفح،
+   فيصل الإبلاغ ومعه ما نحتاجه للتشخيص بلا أسئلة متبادلة. */
+const SUPPORT_WHATSAPP = '966590355799';
+function supportWhatsAppLink() {
+  var ua = (navigator.userAgent || '');
+  var device = /iPhone|iPad|iPod/.test(ua) ? 'iOS'
+             : (/Huawei|HarmonyOS|HONOR/i.test(ua) ? 'Huawei/Honor'
+             : (/SamsungBrowser/i.test(ua) ? 'Samsung' : (/Android/i.test(ua) ? 'Android' : 'Desktop')));
+  var msg = 'السلام عليكم، عندي ملاحظة على تطبيق صلة وتواصل:\n\n\n---\nالجهاز: ' + device;
+  return 'https://wa.me/' + SUPPORT_WHATSAPP + '?text=' + encodeURIComponent(msg);
+}
+
 function exportBackup() {
   try {
     const data = {};
@@ -4906,11 +5007,28 @@ function exportBackup() {
     }
     const payload = { app: 'sila-wa-tawasul', version: 1, exportedAt: new Date().toISOString(), data: data };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const fileName = 'sila-wa-tawasul-backup-' + dateStr + '.json';
+
+    /* سفاري على الآيفون يتجاهل السمة download مع روابط blob، فينتهي
+       الأمر بفتح النص في تبويب بدل حفظ ملف — والنسخة الاحتياطية أهم
+       من أن تُترك لهذا. نستخدم مشاركة الملف الأصلية حين تتوفّر. */
+    try {
+      if (typeof File === 'function' && navigator.canShare) {
+        const file = new File([blob], fileName, { type: 'application/json' });
+        if (navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: fileName })
+            .then(function () { toast(t('backup_export_success'), 'success'); })
+            .catch(function () { /* المستخدم ألغى */ });
+          return;
+        }
+      }
+    } catch (e) { /* نكمل بالطريقة التقليدية */ }
+
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const dateStr = new Date().toISOString().slice(0, 10);
     a.href = url;
-    a.download = 'sila-wa-tawasul-backup-' + dateStr + '.json';
+    a.download = fileName;
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
@@ -4988,16 +5106,47 @@ function renderCopyrightFooter(withLogo) {
 }
 
 /* ---------- تكوين الشجرة: أعداد فقط، تُملأ الأسماء لاحقًا ---------- */
-const TREE_PLAN_DEFAULT = { father: 1, mother: 1, spouse: 1, son: 2, daughter: 2, brother: 2, sister: 2, inlaws: 1 };
+const TREE_PLAN_DEFAULT = {
+  father: 1, mother: 1, spouse: 1, son: 2, daughter: 2, brother: 2, sister: 2,
+  grandson: 0, granddaughter: 0, inlaws: 1,
+  grandfather: 0, grandmother: 0,
+  uncle_paternal: 1, aunt_paternal: 1, cousin_uncle: 0, cousin_uncle_f: 0,
+  cousin_aunt_pat: 0, cousin_aunt_pat_f: 0,
+  uncle_maternal: 1, aunt_maternal: 1, cousin_uncle_mat: 0, cousin_uncle_mat_f: 0,
+  cousin_aunt_mat: 0, cousin_aunt_mat_f: 0,
+  nephew_brother: 0, niece_brother: 0, nephew_sister: 0, niece_sister: 0,
+};
 const TREE_PLAN_FIELDS = [
-  { key: 'father',   label: 'الوالد',            max: 1 },
-  { key: 'mother',   label: 'الوالدة',           max: 1 },
-  { key: 'brother',  label: 'الإخوة',            max: 20 },
-  { key: 'sister',   label: 'الأخوات',           max: 20 },
-  { key: 'spouse',   label: 'الزوج/الزوجة',      max: 4 },
-  { key: 'son',      label: 'الأبناء',           max: 20 },
-  { key: 'daughter', label: 'البنات',            max: 20 },
+  { section: 'شجرة أسرتي' },
+  { key: 'father',   label: 'الوالد',             max: 1 },
+  { key: 'mother',   label: 'الوالدة',            max: 1 },
+  { key: 'brother',  label: 'الإخوة',             max: 20 },
+  { key: 'sister',   label: 'الأخوات',            max: 20 },
+  { key: 'spouse',   label: 'الزوج/الزوجة',       max: 4 },
+  { key: 'son',      label: 'الأبناء',            max: 20 },
+  { key: 'daughter', label: 'البنات',             max: 20 },
+  { key: 'grandson', label: 'الأحفاد',            max: 30 },
+  { key: 'granddaughter', label: 'الحفيدات',      max: 30 },
   { key: 'inlaws',   label: 'والدا الزوج/الزوجة', max: 1 },
+  { section: 'شجرة أقاربي' },
+  { key: 'grandfather', label: 'الأجداد',      max: 4 },
+  { key: 'grandmother', label: 'الجدّات',      max: 4 },
+  { key: 'uncle_paternal', label: 'الأعمام',   max: 20 },
+  { key: 'aunt_paternal',  label: 'العمّات',   max: 20 },
+  { key: 'cousin_uncle',   label: 'أبناء العم',  max: 30 },
+  { key: 'cousin_uncle_f', label: 'بنات العم',   max: 30 },
+  { key: 'cousin_aunt_pat',   label: 'أبناء العمة', max: 30 },
+  { key: 'cousin_aunt_pat_f', label: 'بنات العمة',  max: 30 },
+  { key: 'uncle_maternal', label: 'الأخوال',   max: 20 },
+  { key: 'aunt_maternal',  label: 'الخالات',   max: 20 },
+  { key: 'cousin_uncle_mat',   label: 'أبناء الخال',  max: 30 },
+  { key: 'cousin_uncle_mat_f', label: 'بنات الخال',   max: 30 },
+  { key: 'cousin_aunt_mat',    label: 'أبناء الخالة', max: 30 },
+  { key: 'cousin_aunt_mat_f',  label: 'بنات الخالة',  max: 30 },
+  { key: 'nephew_brother', label: 'أبناء الإخوة', max: 30 },
+  { key: 'niece_brother',  label: 'بنات الإخوة',  max: 30 },
+  { key: 'nephew_sister',  label: 'أبناء الأخوات', max: 30 },
+  { key: 'niece_sister',   label: 'بنات الأخوات',  max: 30 },
 ];
 function getTreePlan() {
   try {
@@ -5089,6 +5238,7 @@ function settingsTabContent(tab, settings) {
         '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('tree_plan_hint') + '</p>' +
         '<div id="tree-plan-fields">' +
           TREE_PLAN_FIELDS.map(function (f) {
+            if (f.section) return '<h3 class="tp-section">' + f.section + '</h3>';
             const v = plan[f.key] || 0;
             return (
               '<div class="tp-row">' +
@@ -5118,6 +5268,11 @@ function settingsTabContent(tab, settings) {
         '<h2 class="v2-notes-head"><span>' + t('factory_reset_label') + '</span></h2>' +
         '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('factory_reset_desc') + '</p>' +
         '<button type="button" class="v2-danger-btn" id="factory-reset-btn">' + t('factory_reset_btn') + '</button>' +
+      '</section>' +
+      '<section class="v2-info-card" style="margin-bottom:14px">' +
+        '<h2 class="v2-notes-head"><span>' + t('support_label') + '</span></h2>' +
+        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('support_desc') + '</p>' +
+        '<a class="v2-add-btn" id="support-whatsapp-btn" href="' + supportWhatsAppLink() + '" target="_blank" rel="noopener">' + t('support_btn') + '</a>' +
       '</section>' +
       '<section class="v2-info-card">' +
         '<h2 class="v2-notes-head"><span>' + t('about_app_label') + '</span></h2>' +
