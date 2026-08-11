@@ -1235,12 +1235,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 .hs2-lang-toggle:active { transform: scale(0.9); }
 
+/* زر المساعدة — الجولة كانت مدفونة في الإعدادات، ومن يحتاجها لا يعرف
+   أين يبحث عنها */
+.hs2-help-btn { left: 58px; font-size: 17px; font-weight: 800; text-decoration: none; }
+
 /* ---------- الترحيب ---------- */
 .hs2-greet {
   position: relative;
   z-index: 1;
   padding: 12px 20px 6px;
-  padding-left: 58px;
+  padding-left: 100px;
   overflow: visible;
 }
 .hs2-logo-icon {
@@ -1576,6 +1580,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   border-bottom: 1px solid var(--line);
 }
 .tp-row:last-child { border-bottom: none; }
+.tp-row { flex-wrap: wrap; }
 .tp-label { font-size: 14px; font-weight: 700; color: var(--text); }
 .tp-stepper {
   display: flex;
@@ -1596,6 +1601,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
 }
 .tp-btn:active { transform: scale(0.88); }
+.tp-btn-lg { font-size: 12px; font-weight: 800; width: 40px; }
 .tp-value { min-width: 34px; text-align: center; font-size: 16px; font-weight: 800; color: var(--text); }
 
 /* ---------- شجرة أسرتي ---------- */
@@ -2058,6 +2064,7 @@ html[data-theme="night"] {
     <div class="hs2-ambient" aria-hidden="true"></div>
 
     <button type="button" class="hs2-lang-toggle" id="hs2-lang-toggle" aria-label="Switch language"></button>
+    <a class="hs2-lang-toggle hs2-help-btn" id="hs2-help-btn" href="onboarding.html?tour=1" aria-label="كيف أستخدم التطبيق؟">؟</a>
 
     <!-- الترحيب — يعيش مباشرة على الخلفية، بلا صندوق -->
     <header class="hs2-greet">
@@ -2162,8 +2169,7 @@ html[data-theme="night"] {
           <button type="button" class="v2-category-icon-btn" data-cat="family" data-rel="son"><span class="v2-cat-icon-badge"></span><span>عائلتي</span></button>
           <button type="button" class="v2-category-icon-btn" data-cat="siblings" data-rel="brother"><span class="v2-cat-icon-badge"></span><span>الإخوة والأخوات</span></button>
           <button type="button" class="v2-category-icon-btn" data-cat="relatives" data-rel="relative_general"><span class="v2-cat-icon-badge"></span><span>الأقارب</span></button>
-          <button type="button" class="v2-category-icon-btn" data-cat="friends" data-rel="friend"><span class="v2-cat-icon-badge"></span><span>الأصدقاء</span></button>
-          <button type="button" class="v2-category-icon-btn" data-cat="friends" data-rel="coworker"><span class="v2-cat-icon-badge"></span><span>زملاء العمل</span></button>
+          <button type="button" class="v2-category-icon-btn" data-cat="circle" data-rel="friend"><span class="v2-cat-icon-badge"></span><span>أصدقائي وزملائي</span></button>
         </div>
       </div>
 
@@ -2688,13 +2694,15 @@ const TRANSLATIONS = {
     reconnected_toast: 'جميل، وصلت رحمك 🌿',
     theme_nudge_toast: '🎨 اختر الهوية اللونية التي تريحك من الإعدادات',
     tour1_title: 'يعتني بعلاقاتك، لا يديرها',
-    tour1_desc: 'صلة وتواصل رفيق يذكّرك بمن تحب، بلغة إنسانية دافئة — مو دفتر أرقام بارد.',
-    tour2_title: 'أضف دائرتك بضغطة واحدة',
-    tour2_desc: 'استورد عدة أشخاص من جهات اتصالك دفعة وحدة، أو أضفهم بالصوت، أو بالصورة — بأي طريقة تناسبك.',
-    tour3_title: 'يعرف الفرق تلقائيًا',
-    tour3_desc: 'لمن رحل من أحبابك، يذكّرك بالدعاء له. ولمن هو على قيد الحياة، يذكّرك بالتواصل معه.',
-    tour4_title: 'يحتفظ بلحظاتكم',
-    tour4_desc: 'دوّن ذكرياتك مع كل شخص، وتابع سجل تواصلكم — علاقاتك أكثر من مجرد بيانات.',
+    tour1_desc: 'صلة وتواصل رفيق يذكّرك بمن تحب، بجملة إنسانية دافئة — لا بدفتر أرقام بارد.',
+    tour2_title: 'ابْنِ شجرتك دفعة واحدة',
+    tour2_desc: 'من زر «إضافة» اختر «عائلتي» أو «أقاربي»، فتظهر خانات جاهزة: الوالدان، الإخوة، الزوجة، الأبناء، الأحفاد، الأعمام والأخوال وأبناؤهم. اكتب الأسماء واحفظ الشجرة كاملة بضغطة.',
+    tour3_title: 'حدّد الأعداد مرة واحدة',
+    tour3_desc: 'من الإعدادات ← «شجرتي» حدّد كم أخًا وابنًا وعمًّا لديك، فتُبنى الخانات تلقائيًا في كل مرة.',
+    tour4_title: 'يعرف الفرق تلقائيًا',
+    tour4_desc: 'من رحل من أحبابك يبقى في قائمته، بزر دعاء بدل زر الاتصال. ومن هو حيّ يذكّرك بالتواصل معه في وقته.',
+    tour5_title: 'بياناتك عندك، فاحفظها',
+    tour5_desc: 'كل شيء محفوظ على جهازك وحده، بلا حساب ولا خادم. لذلك خذ نسخة احتياطية من الإعدادات ← «البيانات» بعد كل إضافة مهمة.',
     tour_skip: 'تخطَّ الجولة',
     tour_finish: 'تمام، فهمت',
     tour_next: 'التالي',
@@ -2950,13 +2958,15 @@ const TRANSLATIONS = {
     reconnected_toast: 'Beautiful, you reached out 🌿',
     theme_nudge_toast: '🎨 Choose the color identity that suits you from Settings',
     tour1_title: 'Cares for your relationships, not manages them',
-    tour1_desc: "Sila wa Tawasul is a companion that reminds you of those you love, in warm human language — not a cold number ledger.",
-    tour2_title: 'Add your circle in one tap',
-    tour2_desc: 'Import several people from your contacts at once, or add them by voice, or from a photo — whatever way suits you.',
-    tour3_title: 'Automatically knows the difference',
-    tour3_desc: "For loved ones who've passed, it reminds you to pray for them. For those still with you, it reminds you to stay in touch.",
-    tour4_title: 'Holds onto your moments together',
-    tour4_desc: 'Jot down memories with each person, and track your communication history — your relationships are more than just data.',
+    tour1_desc: 'Sila wa Tawasul reminds you of the people you love in a warm human sentence, not a cold contact list.',
+    tour2_title: 'Build your tree in one go',
+    tour2_desc: 'From Add, pick My family or My relatives and ready-made slots appear: parents, siblings, spouse, children, grandchildren, uncles, aunts and cousins.',
+    tour3_title: 'Set the counts once',
+    tour3_desc: 'In Settings, My tree, set how many siblings, children and uncles you have, and the slots are built for you every time.',
+    tour4_title: 'It knows the difference',
+    tour4_desc: 'Those who have passed stay on their list, with a prayer button in place of the call button. Those still with us get a gentle nudge.',
+    tour5_title: 'Your data is yours, so back it up',
+    tour5_desc: 'Everything stays on your device, with no account and no server. Take a backup from Settings, Data, after every important addition.',
     tour_skip: 'Skip tour',
     tour_finish: 'Got it, thanks',
     tour_next: 'Next',
@@ -3903,7 +3913,7 @@ function initSmartAdd() {
   if (pasteTextarea) pasteTextarea.placeholder = t('paste_placeholder');
   var categoryPicker = document.getElementById('category-picker');
   if (categoryPicker) {
-    var CAT_ICON_MAP = { parents: 'parents', family: 'family', siblings: 'siblings', relatives: 'relatives', friends: 'friends' };
+    var CAT_ICON_MAP = { parents: 'parents', family: 'family', siblings: 'siblings', relatives: 'relatives', friends: 'friends', circle: 'friends' };
     categoryPicker.querySelectorAll('.v2-category-icon-btn').forEach(function (btn) {
       var cat = btn.dataset.cat, rel = btn.dataset.rel;
       var isCoworker = cat === 'friends' && rel === 'coworker';
@@ -3912,6 +3922,8 @@ function initSmartAdd() {
       var badge = btn.querySelector('.v2-cat-icon-badge');
       if (badge) badge.innerHTML = hsIcon(iconKey, 16);
       var label = btn.querySelector('span:last-child');
+      /* بطاقة الدائرة تجمع فئتين، فاسمها ثابت لا يشتق من فئة واحدة */
+      if (cat === 'circle') return;
       if (label) label.textContent = isCoworker ? customCategoryLabel('coworkers') : (isFriend ? customCategoryLabel('friends') : customCategoryLabel(cat));
     });
   }
@@ -3963,6 +3975,7 @@ function initSmartAdd() {
        بدل القفز مباشرة لدفتر الهاتف. */
     if (chip.dataset.cat === 'family') { showFamilyBuilder(); return; }
     if (chip.dataset.cat === 'relatives') { showRelativesBuilder(); return; }
+    if (chip.dataset.cat === 'circle') { showCircleBuilder(); return; }
     if (!bulkImportSupported) {
       /* بلا دعم دفتر الاتصال: نفتح النموذج اليدوي بالقرابة جاهزة */
       showFormWithData({ name: '', phone: '', relationType: chip.dataset.rel });
@@ -4062,12 +4075,24 @@ function initSmartAdd() {
                   { role: 'nephew_sister', label: 'ابن أختي', multi: true }, { role: 'niece_sister', label: 'بنت أختي', multi: true }],
           adds: [['nephew_brother', '＋ ابن أخ'], ['niece_brother', '＋ بنت أخ'], ['nephew_sister', '＋ ابن أخت'], ['niece_sister', '＋ بنت أخت']] },
       ]
+    },
+    circle: {
+      title: 'دائرتي',
+      hint: 'أصدقاؤك وزملاؤك في شجرة واحدة، كلٌّ في فرعه. زِد ما شئت بزر ＋.',
+      branches: [
+        { title: 'الفرع الأول — أصدقائي',
+          roles: [{ role: 'close_friend', label: 'صديقي المقرّب', multi: true }, { role: 'friend', label: 'صديقي', multi: true }],
+          adds: [['close_friend', '＋ صديق مقرّب'], ['friend', '＋ صديق']] },
+        { title: 'الفرع الثاني — زملائي',
+          roles: [{ role: 'coworker', label: 'زميلي', multi: true }],
+          adds: [['coworker', '＋ زميل']] },
+      ]
     }
   };
 
   var ftMode = 'family';
   var ftState = { spouseType: 'none' };
-  var ftSeeded = { family: false, relatives: false };
+  var ftSeeded = { family: false, relatives: false, circle: false };
   var ftCanImport = ('contacts' in navigator && 'ContactsManager' in window);
   var ftBlank = function () { return { name: '', phone: '', dead: false }; };
 
@@ -4205,6 +4230,7 @@ function initSmartAdd() {
   }
   function showFamilyBuilder() { showTreeBuilder('family'); }
   function showRelativesBuilder() { showTreeBuilder('relatives'); }
+  function showCircleBuilder() { showTreeBuilder('circle'); }
 
   var fbPanel = document.getElementById('family-builder');
   if (fbPanel) {
@@ -4633,16 +4659,17 @@ function renderRemindersPage() {
 }
 
 /* ---------- 11) الإعداد الأولي (Onboarding) ---------- */
-const ONBOARDING_STEPS = ['welcome', 'tour1', 'tour2', 'tour3', 'tour4', 'parents', 'family', 'siblings', 'relatives', 'done'];
-const TOUR_SLIDES = ['tour1', 'tour2', 'tour3', 'tour4'];
+const ONBOARDING_STEPS = ['welcome', 'tour1', 'tour2', 'tour3', 'tour4', 'tour5', 'parents', 'family', 'siblings', 'relatives', 'done'];
+const TOUR_SLIDES = ['tour1', 'tour2', 'tour3', 'tour4', 'tour5'];
 const onboardingState = { step: 0, parents: {}, family: {}, counts: {}, freq: {} };
 
 function onboardingTourStepHtml(stepKey) {
   const slides = {
     tour1: { icon: '🌿', title: 'tour1_title', desc: 'tour1_desc' },
-    tour2: { icon: '✨', title: 'tour2_title', desc: 'tour2_desc' },
-    tour3: { icon: '🤲', title: 'tour3_title', desc: 'tour3_desc' },
-    tour4: { icon: '💭', title: 'tour4_title', desc: 'tour4_desc' },
+    tour2: { icon: '🌳', title: 'tour2_title', desc: 'tour2_desc' },
+    tour3: { icon: '🔢', title: 'tour3_title', desc: 'tour3_desc' },
+    tour4: { icon: '🤲', title: 'tour4_title', desc: 'tour4_desc' },
+    tour5: { icon: '💾', title: 'tour5_title', desc: 'tour5_desc' },
   };
   const slide = slides[stepKey];
   const currentIndex = TOUR_SLIDES.indexOf(stepKey);
@@ -4650,7 +4677,7 @@ function onboardingTourStepHtml(stepKey) {
     return '<span class="v2-tour-dot' + (i === currentIndex ? ' is-active' : '') + '"></span>';
   }).join('');
 
-  const isLastSlide = stepKey === 'tour4';
+  const isLastSlide = stepKey === TOUR_SLIDES[TOUR_SLIDES.length - 1];
   const nextLabel = (onboardingState.replayMode && isLastSlide) ? t('tour_finish') : t('tour_next');
   const showSkip = !(onboardingState.replayMode && isLastSlide);
 
@@ -4865,7 +4892,10 @@ function initOnboarding() {
   /* وضع "إعادة عرض الجولة" — يفتح مباشرة على الشرائح التعريفية
      بلا المرور بخطوات إدخال البيانات، لمن يحب يراجع شرح الأداة
      بأي وقت لاحق، لا بس أول مرة يفتح فيها التطبيق */
-  if (getQueryParam('tour') === '1' && !root.dataset.onboardWired) {
+  /* الشرط كان مربوطًا بـ onboardWired، وهذا العنصر يُوصَّل مرة واحدة
+     عند الإقلاع — فأي فتح لاحق للجولة كان يتجاهل الطلب ويعرض شاشة
+     الترحيب بدلها. */
+  if (getQueryParam('tour') === '1') {
     onboardingState.step = ONBOARDING_STEPS.indexOf('tour1');
     onboardingState.replayMode = true;
   }
@@ -4898,7 +4928,7 @@ function initOnboarding() {
     const kind = action.dataset.onboard;
 
     if (kind === 'next') {
-      if (onboardingState.replayMode && ONBOARDING_STEPS[onboardingState.step] === 'tour4') {
+      if (onboardingState.replayMode && ONBOARDING_STEPS[onboardingState.step] === TOUR_SLIDES[TOUR_SLIDES.length - 1]) {
         spaRedirect('index.html');
         return;
       }
@@ -5115,6 +5145,7 @@ const TREE_PLAN_DEFAULT = {
   uncle_maternal: 1, aunt_maternal: 1, cousin_uncle_mat: 0, cousin_uncle_mat_f: 0,
   cousin_aunt_mat: 0, cousin_aunt_mat_f: 0,
   nephew_brother: 0, niece_brother: 0, nephew_sister: 0, niece_sister: 0,
+  close_friend: 0, friend: 5, coworker: 5,
 };
 const TREE_PLAN_FIELDS = [
   { section: 'شجرة أسرتي' },
@@ -5147,6 +5178,10 @@ const TREE_PLAN_FIELDS = [
   { key: 'niece_brother',  label: 'بنات الإخوة',  max: 30 },
   { key: 'nephew_sister',  label: 'أبناء الأخوات', max: 30 },
   { key: 'niece_sister',   label: 'بنات الأخوات',  max: 30 },
+  { section: 'أصدقائي وزملائي' },
+  { key: 'close_friend', label: 'الأصدقاء المقرّبون', max: 100 },
+  { key: 'friend',       label: 'الأصدقاء',          max: 100 },
+  { key: 'coworker',     label: 'زملاء العمل',       max: 100 },
 ];
 function getTreePlan() {
   try {
@@ -5244,9 +5279,11 @@ function settingsTabContent(tab, settings) {
               '<div class="tp-row">' +
                 '<span class="tp-label">' + f.label + '</span>' +
                 '<div class="tp-stepper" data-key="' + f.key + '" data-max="' + f.max + '">' +
+                  (f.max > 20 ? '<button type="button" class="tp-btn tp-btn-lg" data-step="-5" aria-label="نقص خمسة">−٥</button>' : '') +
                   '<button type="button" class="tp-btn" data-step="-1" aria-label="نقص">−</button>' +
                   '<span class="tp-value">' + toArabicDigits(v) + '</span>' +
                   '<button type="button" class="tp-btn" data-step="1" aria-label="زيادة">+</button>' +
+                  (f.max > 20 ? '<button type="button" class="tp-btn tp-btn-lg" data-step="5" aria-label="زيادة خمسة">+٥</button>' : '') +
                 '</div>' +
               '</div>'
             );
