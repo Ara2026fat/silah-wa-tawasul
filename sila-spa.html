@@ -1610,8 +1610,22 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
 }
 .tp-btn:active { transform: scale(0.88); }
-.tp-btn-lg { font-size: 11.5px; font-weight: 800; width: 34px; }
-.tp-value { min-width: 28px; text-align: center; font-size: 15px; font-weight: 800; color: var(--text); }
+.tp-value {
+  width: 54px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 7px 2px;
+  font-family: inherit;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.tp-value::-webkit-outer-spin-button, .tp-value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.tp-value:focus { outline: 2px solid var(--turquoise); outline-offset: 1px; }
 
 /* ---------- شجرة أسرتي ---------- */
 .ft-branch {
@@ -2111,14 +2125,11 @@ html[data-theme="night"] {
 <div class="page-shell v2-inner-page" id="shell-category" hidden>
 
 
-    <!-- رأس الشاشة: عنوان + عدد + زر إضافة بارز -->
+    <!-- رأس الشاشة: عنوان + عدد. الإضافة من الشريط السفلي وحده -->
     <header class="v2-parents-header">
       <div class="v2-parents-head-top">
         <a href="index.html" class="v2-back-btn" aria-label="رجوع">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-6 6 6 6"/></svg>
-        </a>
-        <a href="add-person.html?category=parents" class="v2-parents-add" aria-label="إضافة">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
         </a>
       </div>
       <h1 class="v2-parents-title" id="cat-page-title">الوالدان</h1>
@@ -2170,9 +2181,8 @@ html[data-theme="night"] {
 
       <!-- المسار الأساسي: استيراد جماعي من جهات الاتصال، بعد اختيار الفئة أولًا -->
       <div id="import-hero" class="v2-import-hero" hidden>
-        <span class="v2-import-hero-icon">👥</span>
-        <h2 class="v2-import-hero-title" id="import-hero-title">استيراد من جهات الاتصال</h2>
-        <p class="v2-import-hero-hint" id="import-hero-hint">اختر الفئة أولًا، وبعدها تقدر تختار عدة أشخاص من جوالك دفعة وحدة.</p>
+        <h2 class="v2-import-hero-title" id="import-hero-title">إلى أي دائرة تضيف؟</h2>
+        <p class="v2-import-hero-hint" id="import-hero-hint">اختر الدائرة، فتفتح شجرتها جاهزة للأسماء.</p>
         <div class="v2-category-icongrid" id="category-picker">
           <button type="button" class="v2-category-icon-btn" data-cat="parents" data-rel="father"><span class="v2-cat-icon-badge"></span><span>الوالدان</span></button>
           <button type="button" class="v2-category-icon-btn" data-cat="family" data-rel="son"><span class="v2-cat-icon-badge"></span><span>عائلتي</span></button>
@@ -2182,7 +2192,7 @@ html[data-theme="night"] {
         </div>
       </div>
 
-      <button type="button" class="v2-other-ways-toggle" id="other-ways-toggle">طرق إضافة أخرى ‹</button>
+      <button type="button" class="v2-other-ways-toggle" id="other-ways-toggle" hidden>طرق إضافة أخرى ‹</button>
 
       <!-- شبكة طرق الإضافة الأخرى — مطوية افتراضيًا، بلا إرباك أول ما تفتح الشاشة -->
       <div id="smart-methods" class="v2-methods-grid" hidden>
@@ -2563,8 +2573,8 @@ const TRANSLATIONS = {
     check_data: 'تحقّق من البيانات المُدخلة',
     cat_family: 'عائلتي',
     cat_friends_full: 'أصدقائي وزملائي',
-    import_hero_title: 'استيراد من جهات الاتصال',
-    import_hero_hint: 'اختر الفئة أولًا، وبعدها تقدر تختار عدة أشخاص من جوالك دفعة وحدة.',
+    import_hero_title: 'إلى أي دائرة تضيف؟',
+    import_hero_hint: 'اختر الدائرة، فتفتح شجرتها جاهزة للأسماء.',
     other_ways_closed: 'طرق إضافة أخرى ‹',
     other_ways_open: 'إخفاء الطرق الأخرى ‹',
     method_contact: 'شخص واحد من جهات الاتصال',
@@ -2827,8 +2837,8 @@ const TRANSLATIONS = {
     check_data: 'Please check the entered details',
     cat_family: 'My Family',
     cat_friends_full: 'My Friends & Colleagues',
-    import_hero_title: 'Import from contacts',
-    import_hero_hint: 'Pick a category first, then you can select several people from your phone at once.',
+    import_hero_title: 'Which circle are you adding to?',
+    import_hero_hint: 'Pick a circle and its tree opens, ready for names.',
     other_ways_closed: '‹ Other ways to add',
     other_ways_open: '‹ Hide other ways',
     method_contact: 'One person from contacts',
@@ -3973,47 +3983,16 @@ function initSmartAdd() {
      الشجرة كليًا على الآيفون وسطح المكتب. الاستيراد الجماعي وحده
      هو المشروط بالدعم، لا الشاشة كلها. */
   importHero.hidden = false;
-  if (!bulkImportSupported) {
-    document.getElementById('import-hero-title').textContent = t('pick_category_title');
-    document.getElementById('import-hero-hint').textContent = t('pick_category_hint');
-  }
+  otherToggle.hidden = true;
   document.getElementById('category-picker').addEventListener('click', function (e) {
     const chip = e.target.closest('.v2-category-icon-btn');
     if (!chip) return;
-    /* الأسرة ليست قائمة أسماء — لها أدوار معروفة. نفتح بانيَ الأدوار
-       بدل القفز مباشرة لدفتر الهاتف. */
-    if (chip.dataset.cat === 'family') { showFamilyBuilder(); return; }
-    if (chip.dataset.cat === 'relatives') { showRelativesBuilder(); return; }
-    if (chip.dataset.cat === 'circle') { showCircleBuilder(); return; }
-    if (!bulkImportSupported) {
-      /* بلا دعم دفتر الاتصال: نفتح النموذج اليدوي بالقرابة جاهزة */
-      showFormWithData({ name: '', phone: '', relationType: chip.dataset.rel });
-      return;
-    }
-    navigator.contacts.select(['name', 'tel'], { multiple: true })
-      .then(function (contacts) {
-        if (!contacts || !contacts.length) return;
-        const people = contacts.map(function (c) {
-          return {
-            name: c.name && c.name[0] ? c.name[0] : '',
-            phone: c.tel && c.tel[0] ? c.tel[0] : '',
-            relationType: chip.dataset.rel,
-          };
-        }).filter(function (p) { return p.name; });
-        if (!people.length) return;
-        showBulkReview(people);
-      })
-      .catch(function () { /* المستخدم ألغى الاختيار */ });
-  });
-  if (!bulkImportSupported) {
-    methodsGrid.hidden = false;
-    otherToggle.hidden = true;
-  }
-
-  otherToggle.addEventListener('click', function () {
-    const willShow = methodsGrid.hidden;
-    methodsGrid.hidden = !willShow;
-    otherToggle.textContent = willShow ? t('other_ways_open') : t('other_ways_closed');
+    /* طريق واحد للإضافة: كل دائرة تفتح شجرتها. الأدوات المتفرّقة
+       (استيراد جماعي، VCF، لصق، صوت) كانت تشتّت بلا مقابل — الشجرة
+       تغني عنها كلها، وفيها زر 👤 لجلب أي شخص من جهات الاتصال. */
+    showTreeBuilder(chip.dataset.cat === 'circle' ? 'circle'
+                  : (chip.dataset.cat === 'relatives' ? 'relatives' : 'family'),
+                    chip.dataset.cat);
   });
 
   const panels = ['paste-panel', 'voice-panel', 'ocr-panel', 'bulk-review', 'family-builder'];
@@ -4100,6 +4079,7 @@ function initSmartAdd() {
   };
 
   var ftMode = 'family';
+  var ftFocusCat = null;
   var ftState = { spouseType: 'none' };
   var ftSeeded = { family: false, relatives: false, circle: false };
   var ftCanImport = ('contacts' in navigator && 'ContactsManager' in window);
@@ -4167,6 +4147,7 @@ function initSmartAdd() {
     var spec = TREE_SPECS[ftMode];
     document.getElementById('ft-hint').textContent = spec.hint;
     var html = '';
+    var focusBranch = { parents: 0, siblings: 1, family: 2 }[ftFocusCat];
     spec.branches.forEach(function (br, bi) {
       /* فرع أهل الزوجة لا معنى له بلا زوج/زوجة — نطويه بدل عرض
          حقلين معلّقين في الهواء */
@@ -4198,7 +4179,7 @@ function initSmartAdd() {
             }).join('') +
           '</div></div>';
       }
-      html += '<div class="ft-branch" data-branch="' + bi + '">' +
+      html += '<div class="ft-branch' + (focusBranch === bi ? ' is-focus' : '') + '" data-branch="' + bi + '">' +
                 '<h3 class="ft-branch-title">' + ftLabelBranch(br) + '</h3>' +
                 picker + '<div class="ft-rows">' + rows + '</div>' + adds +
               '</div>';
@@ -4227,8 +4208,9 @@ function initSmartAdd() {
     ftSeeded[mode] = true;
   }
 
-  function showTreeBuilder(mode) {
+  function showTreeBuilder(mode, focusCat) {
     ftMode = mode;
+    ftFocusCat = focusCat || null;
     hideAllExceptGrid();
     methodsGrid.hidden = true;
     document.getElementById('import-hero').hidden = true;
@@ -5309,11 +5291,9 @@ function settingsTabContent(tab, settings) {
               '<div class="tp-row">' +
                 '<span class="tp-label">' + f.label + '</span>' +
                 '<div class="tp-stepper" data-key="' + f.key + '" data-max="' + f.max + '">' +
-                  (f.max > 20 ? '<button type="button" class="tp-btn tp-btn-lg" data-step="-5" aria-label="نقص خمسة">−٥</button>' : '') +
                   '<button type="button" class="tp-btn" data-step="-1" aria-label="نقص">−</button>' +
-                  '<span class="tp-value">' + toArabicDigits(v) + '</span>' +
+                  '<input type="number" class="tp-value" inputmode="numeric" min="0" max="' + f.max + '" value="' + v + '" aria-label="' + f.label + '">' +
                   '<button type="button" class="tp-btn" data-step="1" aria-label="زيادة">+</button>' +
-                  (f.max > 20 ? '<button type="button" class="tp-btn tp-btn-lg" data-step="5" aria-label="زيادة خمسة">+٥</button>' : '') +
                 '</div>' +
               '</div>'
             );
@@ -5423,20 +5403,37 @@ function renderSettingsPage() {
     renderSettingsPage();
   });
   const treePlanFields = root.querySelector('#tree-plan-fields');
-  if (treePlanFields) treePlanFields.addEventListener('click', function (e) {
-    const btn = e.target.closest('.tp-btn');
-    if (!btn) return;
-    const stepper = btn.closest('.tp-stepper');
-    const key = stepper.dataset.key;
-    const max = parseInt(stepper.dataset.max, 10);
-    const plan = getTreePlan();
-    let v = (plan[key] || 0) + parseInt(btn.dataset.step, 10);
-    if (v < 0) v = 0;
-    if (v > max) v = max;
-    plan[key] = v;
-    setTreePlan(plan);
-    stepper.querySelector('.tp-value').textContent = toArabicDigits(v);
-  });
+  if (treePlanFields) {
+    treePlanFields.addEventListener('click', function (e) {
+      const btn = e.target.closest('.tp-btn');
+      if (!btn) return;
+      const stepper = btn.closest('.tp-stepper');
+      const key = stepper.dataset.key;
+      const max = parseInt(stepper.dataset.max, 10);
+      const plan = getTreePlan();
+      let v = (plan[key] || 0) + parseInt(btn.dataset.step, 10);
+      if (v < 0) v = 0;
+      if (v > max) v = max;
+      plan[key] = v;
+      setTreePlan(plan);
+      stepper.querySelector('.tp-value').value = v;
+    });
+    /* الرقم نفسه حقل كتابة: من يريد ثلاثين صديقًا يكتب ٣٠ بدل ثلاثين
+       ضغطة — وهذا أوضح من أزرار «٥±» التي كانت تحتاج شرحًا */
+    treePlanFields.addEventListener('change', function (e) {
+      const input = e.target.closest('.tp-value');
+      if (!input) return;
+      const stepper = input.closest('.tp-stepper');
+      const max = parseInt(stepper.dataset.max, 10);
+      let v = parseInt(input.value, 10);
+      if (isNaN(v) || v < 0) v = 0;
+      if (v > max) v = max;
+      const plan = getTreePlan();
+      plan[stepper.dataset.key] = v;
+      setTreePlan(plan);
+      input.value = v;
+    });
+  }
   const dialectPicker = root.querySelector('#dialect-picker');
   if (dialectPicker) dialectPicker.addEventListener('click', function (e) {
     const chip = e.target.closest('.v2-chip');
