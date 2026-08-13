@@ -1580,7 +1580,6 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 /* ---------- عدّادات تكوين الشجرة ---------- */
 .tp-section {
-  display: none;
   font-size: 12.5px;
   font-weight: 800;
   color: var(--turquoise-text);
@@ -2256,6 +2255,7 @@ html[data-theme="night"] {
         <p class="v2-panel-hint" id="ft-hint"></p>
         <!-- الخطوة الأولى: كم عددهم؟ ثم الخطوة الثانية: من هم؟ -->
         <div id="ft-counts" hidden>
+          <button type="button" class="ft-back-counts" id="ft-back-picker">‹ رجوع للدوائر</button>
           <div id="tree-plan-fields"></div>
           <button type="button" class="v2-submit-btn" id="ft-counts-next">التالي — اكتب الأسماء</button>
         </div>
@@ -2532,17 +2532,17 @@ const TRANSLATIONS = {
     language_ar: 'العربية',
     language_en: 'English',
 
-    empty_parents_title: 'لم تُضف الوالدين بعد',
+    empty_parents_title: 'ابدأ بوالديك',
     empty_parents_desc: 'أضف والدك ووالدتك لتبدأ متابعة تواصلك معهم بسهولة',
-    empty_siblings_title: 'لم تُضف الإخوة والأخوات بعد',
+    empty_siblings_title: 'أضف إخوتك وأخواتك',
     empty_siblings_desc: 'أضف إخوانك وأخواتك لتبدأ متابعة تواصلك معهم',
-    empty_relatives_title: 'لم تُضف الأقارب بعد',
+    empty_relatives_title: 'أضف أقاربك',
     empty_relatives_desc: 'أضف أقاربك (أعمام، أخوال، أجداد...) لتبدأ المتابعة',
-    empty_friends_title: 'لم تُضف الأصدقاء بعد',
+    empty_friends_title: 'أضف أصدقاءك',
     empty_friends_desc: 'أضف أصدقاءك لتبدأ متابعة تواصلك معهم',
-    empty_coworkers_title: 'لم تُضف زملاء العمل بعد',
+    empty_coworkers_title: 'أضف زملاءك',
     empty_coworkers_desc: 'أضف زملاءك لتبدأ متابعة تواصلك معهم',
-    empty_family_title: 'لم تُضف عائلتك بعد',
+    empty_family_title: 'أضف أسرتك',
     empty_family_desc: 'أضف زوجك/زوجتك وأبناءك لتبدأ متابعة تواصلك معهم',
     spouse_name_label: 'اسم الزوج/الزوجة',
     spouse_phone_label: 'رقم الزوج/الزوجة',
@@ -2555,7 +2555,7 @@ const TRANSLATIONS = {
     no_results_filter: 'لا توجد نتائج مطابقة للبحث أو الفلتر الحالي.',
     person_singular: 'شخص',
     person_plural: 'أشخاص',
-    not_contacted_yet: 'لم يتم التواصل بعد',
+    not_contacted_yet: 'ابدأ التواصل',
     today_word: 'اليوم',
     yesterday_word: 'أمس',
     days_ago: 'قبل {n} يوم',
@@ -2818,7 +2818,7 @@ const TRANSLATIONS = {
     no_results_filter: 'No results match your search or the current filter.',
     person_singular: 'person',
     person_plural: 'people',
-    not_contacted_yet: 'Not contacted yet',
+    not_contacted_yet: 'Start the connection',
     today_word: 'Today',
     yesterday_word: 'Yesterday',
     days_ago: '{n} days ago',
@@ -3362,8 +3362,10 @@ function connectionStatus(person) {
   if (days <= interval * 2) return 'warning';
   return 'neglected';
 }
-const STATUS_LABEL_ALIVE = { healthy: 'على تواصل', warning: 'اقترب الوقت', neglected: 'مقصّر', placeholder: 'بيانات ناقصة' };
-const STATUS_LABEL_DEAD  = { healthy: 'دعوت له مؤخرًا', warning: 'اقترب وقت الدعاء', neglected: 'لم تدعُ له مؤخرًا', placeholder: 'بيانات ناقصة' };
+/* «مقصّر» حكم على الشخص، و«حان وقت الوصل» دعوة للفعل — والفرق
+   بينهما هو الفرق بين أداة تُؤنّب وأداة تُعين */
+const STATUS_LABEL_ALIVE = { healthy: 'على تواصل', warning: 'اقترب الوقت', neglected: 'حان وقت الوصل', placeholder: 'بيانات ناقصة' };
+const STATUS_LABEL_DEAD  = { healthy: 'دعوت له مؤخرًا', warning: 'اقترب وقت الدعاء', neglected: 'حان وقت الدعاء', placeholder: 'بيانات ناقصة' };
 
 function statusLabel(person) {
   return (person.isDeceased ? STATUS_LABEL_DEAD : STATUS_LABEL_ALIVE)[connectionStatus(person)];
@@ -4005,9 +4007,7 @@ function initSmartAdd() {
     /* طريق واحد للإضافة: كل دائرة تفتح شجرتها. الأدوات المتفرّقة
        (استيراد جماعي، VCF، لصق، صوت) كانت تشتّت بلا مقابل — الشجرة
        تغني عنها كلها، وفيها زر 👤 لجلب أي شخص من جهات الاتصال. */
-    showTreeBuilder(chip.dataset.cat === 'circle' ? 'circle'
-                  : (chip.dataset.cat === 'relatives' ? 'relatives' : 'family'),
-                    chip.dataset.cat);
+    showTreeBuilder('all', chip.dataset.cat);
   });
 
   const panels = ['paste-panel', 'voice-panel', 'ocr-panel', 'bulk-review', 'family-builder'];
@@ -4093,17 +4093,35 @@ function initSmartAdd() {
     }
   };
 
-  var ftMode = 'family';
+  /* شجرة واحدة تجمع كل الفروع — الأسرة ثم الأقارب ثم الأصدقاء.
+     كان لكل دائرة شجرة منفصلة، فيرى المستخدم جزءًا ويظن أن الباقي
+     غير موجود. */
+  TREE_SPECS.all = {
+    title: 'شجرتي',
+    hint: 'شجرتك كاملة: من والديك، إلى أبنائك وأحفادك، ثم أعمامك وأخوالك، ثم أصدقائك وزملائك.',
+    branches: TREE_SPECS.family.branches
+      .concat(TREE_SPECS.relatives.branches)
+      .concat(TREE_SPECS.circle.branches)
+  };
+
+  var ftMode = 'all';
   var ftFocusCat = null;
   /* أي أقسام العدّادات تخصّ كل دائرة — حتى لا يرى المستخدم عدّادات
      أعمامه وهو يضيف أصدقاءه */
   var TREE_COUNT_SECTIONS = {
+    all: ['family', 'grandkids', 'grandparents', 'paternal', 'maternal', 'nephews', 'circle'],
     family: ['family', 'grandkids'],
     relatives: ['grandparents', 'paternal', 'maternal', 'nephews'],
     circle: ['circle'],
   };
+  /* ترتيب الفروع في الشجرة الموحّدة: أسرة(٥) ثم أقارب(٦) ثم دائرة(٢) */
+  var FT_FOCUS_BRANCH = { parents: 0, siblings: 1, family: 2, relatives: 5, circle: 11 };
+  var TREE_SECTION_LABELS = {
+    family: 'أسرتي', grandkids: 'أحفادي', grandparents: 'أجدادي',
+    paternal: 'فرع أبي', maternal: 'فرع أمي', nephews: 'أبناء إخوتي', circle: 'أصدقائي وزملائي',
+  };
   var ftState = { spouseType: 'none' };
-  var ftSeeded = { family: false, relatives: false, circle: false };
+  var ftSeeded = { all: false, family: false, relatives: false, circle: false };
   var ftCanImport = ('contacts' in navigator && 'ContactsManager' in window);
   var ftBlank = function () { return { name: '', phone: '', dead: false }; };
 
@@ -4169,7 +4187,7 @@ function initSmartAdd() {
     var spec = TREE_SPECS[ftMode];
     document.getElementById('ft-hint').textContent = spec.hint;
     var html = '';
-    var focusBranch = { parents: 0, siblings: 1, family: 2 }[ftFocusCat];
+    var focusBranch = FT_FOCUS_BRANCH[ftFocusCat];
     spec.branches.forEach(function (br, bi) {
       /* فرع أهل الزوجة لا معنى له بلا زوج/زوجة — نطويه بدل عرض
          حقلين معلّقين في الهواء */
@@ -4223,7 +4241,7 @@ function initSmartAdd() {
         else if (!ftState[r.role]) ftState[r.role] = ftBlank();
       });
     });
-    if (mode === 'family') {
+    if (mode === 'family' || mode === 'all') {
       if (plan.spouse > 0 && ftState.spouseType === 'none') ftState.spouseType = 'wife';
       if (plan.spouse === 0) ftState.spouseType = 'none';
     }
@@ -4239,7 +4257,13 @@ function initSmartAdd() {
     var inSection = null;
     var html = '';
     TREE_PLAN_FIELDS.forEach(function (f) {
-      if (f.section) { inSection = f.section; return; }
+      if (f.section) {
+        inSection = f.section;
+        if (allowed.indexOf(inSection) !== -1 && allowed.length > 1) {
+          html += '<h3 class="tp-section">' + (TREE_SECTION_LABELS[inSection] || '') + '</h3>';
+        }
+        return;
+      }
       if (allowed.indexOf(inSection) === -1) return;
       var v = plan[f.key] || 0;
       html +=
@@ -4265,6 +4289,16 @@ function initSmartAdd() {
     if (isCounts) ftRenderCounts();
   }
 
+  /* العودة لبطاقات الدوائر بدل مغادرة الشاشة كليًا */
+  function showPicker() {
+    hideAllExceptGrid();
+    methodsGrid.hidden = true;
+    document.getElementById('family-builder').hidden = true;
+    document.getElementById('import-hero').hidden = false;
+    document.getElementById('other-ways-toggle').hidden = true;
+  }
+  window.silaShowAddPicker = showPicker;
+
   function showTreeBuilder(mode, focusCat) {
     ftMode = mode;
     ftFocusCat = focusCat || null;
@@ -4287,7 +4321,14 @@ function initSmartAdd() {
     ftSeed(ftMode);
     ftShowStep('names');
     ftRender();
+    var target = document.querySelector('#ft-branches .ft-branch.is-focus');
+    if (target && target.scrollIntoView) {
+      setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+    }
   });
+  var ftBackPicker = document.getElementById('ft-back-picker');
+  if (ftBackPicker) ftBackPicker.addEventListener('click', showPicker);
+
   var ftBackCounts = document.getElementById('ft-back-counts');
   if (ftBackCounts) ftBackCounts.addEventListener('click', function () {
     ftCollect();
@@ -5711,54 +5752,55 @@ function priorityScore(p) {
   return personImportance(p) * overdueRatio;
 }
 
-function humanizeAr(days) {
-  if (days <= 2) return 'منذ يومين تقريبًا';
-  if (days <= 6) return 'منذ أيام قليلة';
-  if (days <= 10) return 'منذ أسبوع تقريبًا';
-  if (days <= 20) return 'منذ أسبوعين تقريبًا';
-  if (days <= 40) return 'منذ شهر تقريبًا';
-  if (days <= 70) return 'منذ شهرين تقريبًا';
-  return 'منذ فترة طويلة';
-}
-function humanizeEn(days) {
-  if (days <= 2) return 'about two days ago';
-  if (days <= 6) return 'a few days ago';
-  if (days <= 10) return 'about a week ago';
-  if (days <= 20) return 'about two weeks ago';
-  if (days <= 40) return 'about a month ago';
-  if (days <= 70) return 'about two months ago';
-  return 'a long while ago';
-}
 function lifeSentence(p) {
+  /* الجملة دعوة لا محاسبة. كانت تقول «لم يسمع صوتك» — وهذا لوم يجعل
+     المستخدم يتجنّب فتح التطبيق. صارت تُذكّر بالفرصة لا بالتقصير. */
   const days = p.lastContactedAt ? daysBetween(p.lastContactedAt, Date.now()) : null;
   const lang = currentLang();
+
   if (lang === 'en') {
-    const timePhrase = days === null ? "You haven't connected yet —" : humanizeEn(days);
-    if (p.isDeceased) return "Don't forget to pray for " + p.name + ' today — a sincere prayer reaches them.';
+    if (p.isDeceased) return 'A prayer for ' + p.name + ' today reaches them.';
+    const soon = days === null || days > 20;
     switch (p.relationType) {
-      case 'father': return timePhrase + " they haven't heard your voice.";
-      case 'mother': return timePhrase + " they haven't heard your voice.";
+      case 'father':
+      case 'mother': return soon ? 'Your voice would make their day.' : 'A quick hello would warm their heart.';
       case 'brother':
-      case 'sister': return "You've missed each other — " + timePhrase + " you haven't caught up.";
+      case 'sister': return 'A short catch-up would be good for you both.';
+      case 'son':
+      case 'daughter':
+      case 'grandson':
+      case 'granddaughter': return 'A word from you means the world to them.';
       case 'friend':
-      case 'close_friend': return 'Your friendship deserves a call — ' + timePhrase + " you haven't talked.";
-      case 'coworker': return p.name + ' deserves a check-in, ' + timePhrase + " you haven't connected.";
-      default: return p.name + ' always thinks of you, ' + timePhrase + " you haven't asked about them.";
+      case 'close_friend': return 'A good friendship is worth a call today.';
+      case 'coworker': return 'A quick check-in on ' + p.name + ' would be kind.';
+      default: return p.name + ' would be glad to hear from you.';
     }
   }
-  const timePhrase = days === null ? 'لم يتم التواصل بعد —' : humanizeAr(days);
-  if (p.isDeceased) return 'لا تنسَ الدعاء لـ' + p.name + ' اليوم — دعوة صادقة تصله.';
+
+  if (p.isDeceased) return 'دعوة صادقة لـ' + p.name + ' اليوم تصله.';
+
+  /* نلمّح للوقت بلطف حين يطول، ولا نذكره أبدًا كاتهام */
+  const gentle = (days !== null && days > 20);
   switch (p.relationType) {
-    case 'father': return timePhrase + ' لم يسمع صوتك.';
-    case 'mother': return timePhrase + ' لم تسمع صوتك.';
-    case 'brother':
-    case 'sister': return 'اشتقتوا لبعض من زمان — ' + timePhrase + ' ما جلستوا سوا.';
+    case 'father': return gentle ? 'مكالمة قصيرة تُسعد والدك اليوم.' : 'صوتك يسعد والدك — اتصل به.';
+    case 'mother': return gentle ? 'مكالمة قصيرة تُسعد والدتك اليوم.' : 'صوتك يسعد والدتك — اتصل بها.';
+    case 'brother': return 'اتصال بأخيك يجدّد ما بينكما.';
+    case 'sister': return 'اتصال بأختك يجدّد ما بينكما.';
+    case 'wife':
+    case 'husband': return 'كلمة دافئة اليوم تكفي.';
+    case 'son':
+    case 'daughter': return 'سؤالك عنه يعني له الكثير.';
+    case 'grandson':
+    case 'granddaughter': return 'صوتك يفرح قلبه اليوم.';
+    case 'father_in_law':
+    case 'mother_in_law': return 'سؤال طيّب يزيد المودّة.';
     case 'friend':
-    case 'close_friend': return 'صداقتكم تستحق مكالمة — ' + timePhrase + ' ما تواصلتوا.';
-    case 'coworker': return p.name + ' يستحق سؤالًا عنه، ' + timePhrase + ' ما تواصلتوا.';
-    default: return p.name + ' يذكرك دائمًا، ' + timePhrase + ' ما سألت عنه.';
+    case 'close_friend': return 'صداقتكم تستحق مكالمة اليوم.';
+    case 'coworker': return 'سؤال سريع عن ' + p.name + ' يطيّب الخاطر.';
+    default: return 'صلة الرحم بركة — تواصل مع ' + p.name + ' اليوم.';
   }
 }
+
 
 function v2RenderHome() {
   const grid = document.getElementById('v2-grid');
@@ -6440,6 +6482,12 @@ function spaRenderPage(page) {
     } else if (page === 'add-person') {
       renderAddPersonForm();
       initSmartAdd();
+      /* اللوحة تبقى مفتوحة من زيارة سابقة، فيفتح زر «إضافة» على شجرة
+         بدل بطاقات الدوائر. نعيدها للبداية في كل دخول — إلا في وضع
+         التعديل حيث النموذج هو المقصود. */
+      if (!getQueryParam('id') && !getQueryParam('complete') && typeof window.silaShowAddPicker === 'function') {
+        window.silaShowAddPicker();
+      }
     } else if (page === 'profile') {
       v2RenderProfilePage();
     } else if (page === 'reminders') {
