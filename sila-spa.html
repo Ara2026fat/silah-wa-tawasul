@@ -818,6 +818,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .v2-parents-empty h3 { font-size: 14.5px; font-weight: 700; color: var(--text); }
 .v2-parents-empty p { font-size: 12.5px; color: var(--text-muted); max-width: 240px; }
 
+.v2-note-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-inline-start: 6px;
+  border-radius: 50%;
+  background: var(--mauve);
+  vertical-align: middle;
+}
+
 /* ---------- نافذة الملاحظات ---------- */
 .v2-modal-backdrop {
   position: fixed;
@@ -1244,14 +1254,14 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 /* زر المساعدة — الجولة كانت مدفونة في الإعدادات، ومن يحتاجها لا يعرف
    أين يبحث عنها */
-.hs2-help-btn { left: 58px; font-size: 16px; font-weight: 800; text-decoration: none; padding-bottom: 2px; }
+.hs2-help-btn { left: 16px; font-size: 16px; font-weight: 800; text-decoration: none; padding-bottom: 2px; }
 
 /* ---------- الترحيب ---------- */
 .hs2-greet {
   position: relative;
   z-index: 1;
   padding: 12px 20px 6px;
-  padding-left: 100px;
+  padding-left: 58px;
   overflow: visible;
 }
 .hs2-logo-icon {
@@ -2086,7 +2096,6 @@ html[data-theme="night"] {
 
     <div class="hs2-ambient" aria-hidden="true"></div>
 
-    <button type="button" class="hs2-lang-toggle" id="hs2-lang-toggle" aria-label="Switch language"></button>
     <a class="hs2-lang-toggle hs2-help-btn" id="hs2-help-btn" href="onboarding.html?tour=1" aria-label="كيف أستخدم التطبيق؟">؟</a>
 
     <!-- الترحيب — يعيش مباشرة على الخلفية، بلا صندوق -->
@@ -2245,8 +2254,16 @@ html[data-theme="night"] {
       <!-- شجرة الأقارب — لوحة واحدة تخدم شجرة الأسرة وشجرة الأقارب -->
       <div id="family-builder" class="v2-panel" hidden>
         <p class="v2-panel-hint" id="ft-hint"></p>
-        <div id="ft-branches"></div>
-        <button type="button" class="v2-submit-btn" id="fb-next-btn">احفظ الشجرة كاملة</button>
+        <!-- الخطوة الأولى: كم عددهم؟ ثم الخطوة الثانية: من هم؟ -->
+        <div id="ft-counts" hidden>
+          <div id="tree-plan-fields"></div>
+          <button type="button" class="v2-submit-btn" id="ft-counts-next">التالي — اكتب الأسماء</button>
+        </div>
+        <div id="ft-names" hidden>
+          <button type="button" class="ft-back-counts" id="ft-back-counts">‹ تعديل الأعداد</button>
+          <div id="ft-branches"></div>
+          <button type="button" class="v2-submit-btn" id="fb-next-btn">احفظ الشجرة كاملة</button>
+        </div>
       </div>
 
       <div id="bulk-review" class="v2-panel" hidden>
@@ -2499,7 +2516,6 @@ const TRANSLATIONS = {
     hero_whatsapp: 'راسله بدفء',
     search_no_results: 'لا يوجد أحد بهذا الاسم بدائرتك.',
     language_label: 'اللغة',
-    settings_tab_tree: 'شجرتي',
     settings_tab_data: 'البيانات',
     tree_plan_label: 'تكوين شجرتي',
     tree_plan_hint: 'حدّد العدد فقط. عند فتح «عائلتي» أو «أقاربي» من زر الإضافة تظهر الخانات جاهزة للأسماء.',
@@ -2763,7 +2779,6 @@ const TRANSLATIONS = {
     hero_whatsapp: 'Send a warm message',
     search_no_results: 'No one with this name in your circle.',
     language_label: 'Language',
-    settings_tab_tree: 'My tree',
     settings_tab_data: 'Data',
     tree_plan_label: 'My family tree setup',
     tree_plan_hint: 'Set the counts only. Opening "My family" from Add shows the slots ready.',
@@ -4080,6 +4095,13 @@ function initSmartAdd() {
 
   var ftMode = 'family';
   var ftFocusCat = null;
+  /* أي أقسام العدّادات تخصّ كل دائرة — حتى لا يرى المستخدم عدّادات
+     أعمامه وهو يضيف أصدقاءه */
+  var TREE_COUNT_SECTIONS = {
+    family: ['family', 'grandkids'],
+    relatives: ['grandparents', 'paternal', 'maternal', 'nephews'],
+    circle: ['circle'],
+  };
   var ftState = { spouseType: 'none' };
   var ftSeeded = { family: false, relatives: false, circle: false };
   var ftCanImport = ('contacts' in navigator && 'ContactsManager' in window);
@@ -4208,6 +4230,41 @@ function initSmartAdd() {
     ftSeeded[mode] = true;
   }
 
+  /* شاشة الأعداد كانت مدفونة في الإعدادات، والمستخدم يحدّد الأعداد في
+     مكان ثم يكتب الأسماء في مكان آخر. صارت الخطوة الأولى داخل الشجرة
+     نفسها: كم عددهم؟ ← من هم؟ */
+  function ftRenderCounts() {
+    var plan = getTreePlan();
+    var allowed = TREE_COUNT_SECTIONS[ftMode] || [];
+    var inSection = null;
+    var html = '';
+    TREE_PLAN_FIELDS.forEach(function (f) {
+      if (f.section) { inSection = f.section; return; }
+      if (allowed.indexOf(inSection) === -1) return;
+      var v = plan[f.key] || 0;
+      html +=
+        '<div class="tp-row">' +
+          '<span class="tp-label">' + f.label + '</span>' +
+          '<div class="tp-stepper" data-key="' + f.key + '" data-max="' + f.max + '">' +
+            '<button type="button" class="tp-btn" data-step="-1" aria-label="نقص">−</button>' +
+            '<input type="number" class="tp-value" inputmode="numeric" min="0" max="' + f.max + '" value="' + v + '" aria-label="' + f.label + '">' +
+            '<button type="button" class="tp-btn" data-step="1" aria-label="زيادة">+</button>' +
+          '</div>' +
+        '</div>';
+    });
+    document.getElementById('tree-plan-fields').innerHTML = html;
+  }
+
+  function ftShowStep(step) {
+    var isCounts = step === 'counts';
+    document.getElementById('ft-counts').hidden = !isCounts;
+    document.getElementById('ft-names').hidden = isCounts;
+    document.getElementById('ft-hint').textContent = isCounts
+      ? 'أولًا: كم عددهم؟ حدّد الأعداد، ثم اكتب الأسماء.'
+      : TREE_SPECS[ftMode].hint;
+    if (isCounts) ftRenderCounts();
+  }
+
   function showTreeBuilder(mode, focusCat) {
     ftMode = mode;
     ftFocusCat = focusCat || null;
@@ -4216,12 +4273,56 @@ function initSmartAdd() {
     document.getElementById('import-hero').hidden = true;
     document.getElementById('other-ways-toggle').hidden = true;
     document.getElementById('family-builder').hidden = false;
-    if (!ftSeeded[mode]) ftSeed(mode);
-    ftRender();
+    ftShowStep('counts');
   }
   function showFamilyBuilder() { showTreeBuilder('family'); }
   function showRelativesBuilder() { showTreeBuilder('relatives'); }
   function showCircleBuilder() { showTreeBuilder('circle'); }
+
+  var ftCountsNext = document.getElementById('ft-counts-next');
+  if (ftCountsNext) ftCountsNext.addEventListener('click', function () {
+    /* الأعداد تُبنى من جديد بكل دخول: هذي نية المستخدم الآن، لا نية
+       زيارة سابقة */
+    ftSeeded[ftMode] = false;
+    ftSeed(ftMode);
+    ftShowStep('names');
+    ftRender();
+  });
+  var ftBackCounts = document.getElementById('ft-back-counts');
+  if (ftBackCounts) ftBackCounts.addEventListener('click', function () {
+    ftCollect();
+    ftShowStep('counts');
+  });
+
+  var ftCountsHost = document.getElementById('ft-counts');
+  if (ftCountsHost) {
+    ftCountsHost.addEventListener('click', function (e) {
+      var btn = e.target.closest('.tp-btn');
+      if (!btn) return;
+      var st = btn.closest('.tp-stepper');
+      var max = parseInt(st.dataset.max, 10);
+      var plan = getTreePlan();
+      var v = (plan[st.dataset.key] || 0) + parseInt(btn.dataset.step, 10);
+      if (v < 0) v = 0;
+      if (v > max) v = max;
+      plan[st.dataset.key] = v;
+      setTreePlan(plan);
+      st.querySelector('.tp-value').value = v;
+    });
+    ftCountsHost.addEventListener('change', function (e) {
+      var input = e.target.closest('.tp-value');
+      if (!input) return;
+      var st = input.closest('.tp-stepper');
+      var max = parseInt(st.dataset.max, 10);
+      var v = parseInt(input.value, 10);
+      if (isNaN(v) || v < 0) v = 0;
+      if (v > max) v = max;
+      var plan = getTreePlan();
+      plan[st.dataset.key] = v;
+      setTreePlan(plan);
+      input.value = v;
+    });
+  }
 
   var fbPanel = document.getElementById('family-builder');
   if (fbPanel) {
@@ -5148,11 +5249,12 @@ const TREE_PLAN_FIELDS = [
   { key: 'son',      label: 'الأبناء',            max: 20 },
   { key: 'daughter', label: 'البنات',             max: 20 },
   { key: 'inlaws',   label: 'والدا الزوج/الزوجة', max: 1 },
-  { section: 'roots' },
-  { key: 'grandfather', label: 'الأجداد',      max: 4 },
-  { key: 'grandmother', label: 'الجدّات',      max: 4 },
+  { section: 'grandkids' },
   { key: 'grandson', label: 'الأحفاد',            max: 30 },
   { key: 'granddaughter', label: 'الحفيدات',      max: 30 },
+  { section: 'grandparents' },
+  { key: 'grandfather', label: 'الأجداد',      max: 4 },
+  { key: 'grandmother', label: 'الجدّات',      max: 4 },
   { section: 'paternal' },
   { key: 'uncle_paternal', label: 'الأعمام',   max: 20 },
   { key: 'aunt_paternal',  label: 'العمّات',   max: 20 },
@@ -5191,17 +5293,8 @@ function setTreePlan(plan) {
 let settingsActiveTab = 'appearance';
 /* تبويبات فرعية داخل «شجرتي» — ٣١ عدّادًا في قائمة واحدة تعني تمريرًا
    طويلًا، والتبويب يختصرها إلى شاشة واحدة */
-const TREE_SECTIONS = [
-  { key: 'family',    label: 'أسرتي' },
-  { key: 'roots',     label: 'أجدادي وأحفادي' },
-  { key: 'paternal',  label: 'فرع أبي' },
-  { key: 'maternal',  label: 'فرع أمي' },
-  { key: 'nephews',   label: 'أبناء إخوتي' },
-  { key: 'circle',    label: 'أصدقائي' },
-];
-let treeActiveSection = 'family';
-const SETTINGS_TAB_KEYS = ['appearance', 'tree', 'categories', 'reminders', 'general', 'data'];
-const SETTINGS_TAB_LABEL_KEYS = { appearance: 'settings_tab_appearance', tree: 'settings_tab_tree', categories: 'settings_tab_categories', reminders: 'settings_tab_reminders', general: 'settings_tab_general', data: 'settings_tab_data' };
+const SETTINGS_TAB_KEYS = ['appearance', 'categories', 'reminders', 'general', 'data'];
+const SETTINGS_TAB_LABEL_KEYS = { appearance: 'settings_tab_appearance', categories: 'settings_tab_categories', reminders: 'settings_tab_reminders', general: 'settings_tab_general', data: 'settings_tab_data' };
 
 function settingsTabContent(tab, settings) {
   if (tab === 'appearance') {
@@ -5267,38 +5360,6 @@ function settingsTabContent(tab, settings) {
       '<section class="v2-info-card">' +
         '<h2 class="v2-notes-head"><span>' + t('occasion_reminder_label') + '</span></h2>' +
         '<label class="v2-checkbox-row"><input type="checkbox" id="occasion-toggle"' + (settings.occasionRemindersEnabled ? ' checked' : '') + '> ' + t('occasion_reminder_desc') + '</label>' +
-      '</section>'
-    );
-  }
-  if (tab === 'tree') {
-    const plan = getTreePlan();
-    let inSection = null;
-    return (
-      '<section class="v2-info-card">' +
-        '<h2 class="v2-notes-head"><span>' + t('tree_plan_label') + '</span></h2>' +
-        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('tree_plan_hint') + '</p>' +
-        '<div class="v2-chip-row" id="tree-section-picker">' +
-          TREE_SECTIONS.map(function (sec) {
-            return '<button type="button" class="v2-chip' + (sec.key === treeActiveSection ? ' is-active' : '') + '" data-tree-section="' + sec.key + '">' + sec.label + '</button>';
-          }).join('') +
-        '</div>' +
-        '<div id="tree-plan-fields">' +
-          TREE_PLAN_FIELDS.map(function (f) {
-            if (f.section) { inSection = f.section; return ''; }
-            if (inSection !== treeActiveSection) return '';
-            const v = plan[f.key] || 0;
-            return (
-              '<div class="tp-row">' +
-                '<span class="tp-label">' + f.label + '</span>' +
-                '<div class="tp-stepper" data-key="' + f.key + '" data-max="' + f.max + '">' +
-                  '<button type="button" class="tp-btn" data-step="-1" aria-label="نقص">−</button>' +
-                  '<input type="number" class="tp-value" inputmode="numeric" min="0" max="' + f.max + '" value="' + v + '" aria-label="' + f.label + '">' +
-                  '<button type="button" class="tp-btn" data-step="1" aria-label="زيادة">+</button>' +
-                '</div>' +
-              '</div>'
-            );
-          }).join('') +
-        '</div>' +
       '</section>'
     );
   }
@@ -5395,45 +5456,6 @@ function renderSettingsPage() {
     hsRenderNavIcons();
     renderSettingsPage();
   });
-  const treeSectionPicker = root.querySelector('#tree-section-picker');
-  if (treeSectionPicker) treeSectionPicker.addEventListener('click', function (e) {
-    const chip = e.target.closest('.v2-chip');
-    if (!chip) return;
-    treeActiveSection = chip.dataset.treeSection;
-    renderSettingsPage();
-  });
-  const treePlanFields = root.querySelector('#tree-plan-fields');
-  if (treePlanFields) {
-    treePlanFields.addEventListener('click', function (e) {
-      const btn = e.target.closest('.tp-btn');
-      if (!btn) return;
-      const stepper = btn.closest('.tp-stepper');
-      const key = stepper.dataset.key;
-      const max = parseInt(stepper.dataset.max, 10);
-      const plan = getTreePlan();
-      let v = (plan[key] || 0) + parseInt(btn.dataset.step, 10);
-      if (v < 0) v = 0;
-      if (v > max) v = max;
-      plan[key] = v;
-      setTreePlan(plan);
-      stepper.querySelector('.tp-value').value = v;
-    });
-    /* الرقم نفسه حقل كتابة: من يريد ثلاثين صديقًا يكتب ٣٠ بدل ثلاثين
-       ضغطة — وهذا أوضح من أزرار «٥±» التي كانت تحتاج شرحًا */
-    treePlanFields.addEventListener('change', function (e) {
-      const input = e.target.closest('.tp-value');
-      if (!input) return;
-      const stepper = input.closest('.tp-stepper');
-      const max = parseInt(stepper.dataset.max, 10);
-      let v = parseInt(input.value, 10);
-      if (isNaN(v) || v < 0) v = 0;
-      if (v > max) v = max;
-      const plan = getTreePlan();
-      plan[stepper.dataset.key] = v;
-      setTreePlan(plan);
-      input.value = v;
-    });
-  }
   const dialectPicker = root.querySelector('#dialect-picker');
   if (dialectPicker) dialectPicker.addEventListener('click', function (e) {
     const chip = e.target.closest('.v2-chip');
@@ -6176,7 +6198,8 @@ function v2CategoryCardHtml(person) {
   const waAction = person.isDeceased
     ? ''
     : '<a class="v2-parent-action action-whatsapp" href="' + toWhatsAppLink(person.phone) + '" target="_blank" rel="noopener" data-action="whatsapp" data-id="' + person.id + '">' + hsIcon('friends', 14) + ' ' + t('whatsapp_action') + '</a>';
-  const notesAction = '<button class="v2-parent-action action-notes' + (hasNote ? ' has-note' : '') + '" type="button" data-action="notes" data-id="' + person.id + '">' + hsIcon('settings', 14) + ' ' + t('notes_action') + '</button>';
+  /* زر الملاحظات كان يتكرّر تحت كل شخص — ثلاث أيقونات × كل صف.
+     نقلناه للملف الشخصي، وتبقى نقطة صغيرة تدلّ على وجود ذكرى. */
   const favMark = person.isFavorite ? '<span class="v2-fav-mark">★</span>' : '';
 
   return (
@@ -6184,14 +6207,14 @@ function v2CategoryCardHtml(person) {
       '<a class="v2-parent-card-main" href="' + profileUrl(person.id) + '">' +
         '<span class="v2-person-avatar">' + escapeHtml(initial(displayName(person))) + '</span>' +
         '<span class="v2-parent-card-info">' +
-          '<span class="v2-parent-card-name">' + escapeHtml(displayName(person)) + favMark + (personBlessing(person) ? ' <span class="v2-card-blessing">' + escapeHtml(personBlessing(person)) + '</span>' : '') + '</span>' +
+          '<span class="v2-parent-card-name">' + escapeHtml(displayName(person)) + favMark + (hasNote ? '<span class="v2-note-dot" aria-label="فيه ذكرى"></span>' : '') + (personBlessing(person) ? ' <span class="v2-card-blessing">' + escapeHtml(personBlessing(person)) + '</span>' : '') + '</span>' +
           '<span class="v2-parent-card-meta">' +
             '<span class="v2-status-pill status-' + status + '">' + statusText + '</span>' +
             '<span class="v2-parent-card-date">' + categoryRelativeDate(person.lastContactedAt) + '</span>' +
           '</span>' +
         '</span>' +
       '</a>' +
-      '<span class="v2-parent-card-actions">' + callAction + waAction + notesAction + '</span>' +
+      '<span class="v2-parent-card-actions">' + callAction + waAction + '</span>' +
     '</li>'
   );
 }
