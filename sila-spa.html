@@ -968,6 +968,14 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   margin-top: 4px;
   opacity: 0.85;
 }
+.v2-copyright-dua-en {
+  margin-top: 4px;
+  font-size: 10.5px;
+  line-height: 1.7;
+  font-style: italic;
+  opacity: 0.85;
+  color: var(--text-muted);
+}
 .v2-copyright-dua {
   font-family: 'Aref Ruqaa', 'Amiri', serif;
   font-weight: 700;
@@ -1468,7 +1476,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hs2-card-icon.tone-mauve     { background: var(--mauve-tint); color: var(--mauve-text); }
 .hs2-card-icon.tone-beige     { background: var(--beige-tint); color: var(--beige-text); }
 
-.hs2-card-name { font-size: 15.5px; font-weight: 800; color: var(--text); padding: 0 4px; line-height: 1.25; }
+.hs2-card-name { font-size: 14px; text-wrap: balance; font-weight: 800; color: var(--text); padding: 0 4px; line-height: 1.25; }
 .hs2-card-stat { display: flex; align-items: baseline; gap: 3px; }
 .hs2-card-stat b { font-size: 19px; font-weight: 800; color: var(--text); }
 .hs2-card-stat span { font-size: 11.5px; font-weight: 500; color: var(--text-muted); }
@@ -1584,7 +1592,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .hs2-nav { max-width: 460px; }
   .hs2-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .hs2-card { padding: 20px 22px; }
-  .hs2-card-name { font-size: 18px; }
+  .hs2-card-name { font-size: 16px; }
   .hs2-card-stat b { font-size: 24px; }
   .hs2-card-icon { width: 32px; height: 32px; border-radius: 11px; }
   .hs2-card:nth-child(7) { grid-column: auto; }
@@ -1596,7 +1604,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .hs2-nav { max-width: 520px; }
   .hs2-grid { gap: 20px; }
   .hs2-card { padding: 24px 26px; }
-  .hs2-card-name { font-size: 20px; }
+  .hs2-card-name { font-size: 17.5px; }
   .hs2-card-stat b { font-size: 28px; }
   .hs2-card-stat span { font-size: 13px; }
   .hs2-card-icon { width: 38px; height: 38px; border-radius: 13px; }
@@ -2524,9 +2532,9 @@ const TRANSLATIONS = {
     nav_reminders: 'التذكيرات',
     nav_add: 'إضافة',
     nav_settings: 'الإعدادات',
-    cat_parents: 'الوالدان',
-    cat_siblings: 'الإخوة والأخوات',
-    cat_relatives: 'الأقارب',
+    cat_parents: 'والداي',
+    cat_siblings: 'إخوتي',
+    cat_relatives: 'أقاربي',
     cat_friends: 'أصدقائي',
     cat_coworkers: 'زملائي',
     cat_reminders_card: 'التذكيرات',
@@ -2789,11 +2797,11 @@ const TRANSLATIONS = {
     nav_reminders: 'Reminders',
     nav_add: 'Add',
     nav_settings: 'Settings',
-    cat_parents: 'Parents',
-    cat_siblings: 'Siblings',
-    cat_relatives: 'Relatives',
-    cat_friends: 'My Friends',
-    cat_coworkers: 'My Colleagues',
+    cat_parents: 'My parents',
+    cat_siblings: 'My siblings',
+    cat_relatives: 'My relatives',
+    cat_friends: 'My friends',
+    cat_coworkers: 'My colleagues',
     cat_reminders_card: 'Reminders',
     unit_people: 'people',
     unit_people_alt: 'people',
@@ -2866,7 +2874,7 @@ const TRANSLATIONS = {
     main_nav_aria: 'Main navigation',
     search_by_name: 'Search by name...',
     filter_all: 'All',
-    filter_needs: 'Needs contact',
+    filter_needs: 'Reach out',
     filter_healthy: 'In touch',
     sort_by_label: 'Sort by',
     sort_status: 'Status (most overdue first)',
@@ -2877,7 +2885,7 @@ const TRANSLATIONS = {
     edit_data: 'Edit details',
     add_person_title: 'Add person',
     check_data: 'Please check the entered details',
-    cat_family: 'My Family',
+    cat_family: 'My family',
     cat_friends_full: 'My Friends & Colleagues',
     import_hero_title: 'Which circle are you adding to?',
     import_hero_hint: 'Pick a circle and its tree opens, ready for names.',
@@ -3393,9 +3401,17 @@ function connectionStatus(person) {
    بينهما هو الفرق بين أداة تُؤنّب وأداة تُعين */
 const STATUS_LABEL_ALIVE = { healthy: 'على تواصل', warning: 'اقترب الوقت', neglected: 'حان وقت الوصل', placeholder: 'بيانات ناقصة' };
 const STATUS_LABEL_DEAD  = { healthy: 'دعوت له مؤخرًا', warning: 'اقترب وقت الدعاء', neglected: 'حان وقت الدعاء', placeholder: 'بيانات ناقصة' };
+/* كانت الوسوم عربية دائمًا حتى بالواجهة الإنجليزية — ونبرتها هنا حثّ
+   لا لوم، تمامًا كالعربية */
+const STATUS_LABEL_ALIVE_EN = { healthy: 'In touch', warning: 'Time is near', neglected: 'A good time to reach out', placeholder: 'Details missing' };
+const STATUS_LABEL_DEAD_EN  = { healthy: 'Prayed recently', warning: 'Prayer time is near', neglected: 'A good time to pray', placeholder: 'Details missing' };
 
 function statusLabel(person) {
-  return (person.isDeceased ? STATUS_LABEL_DEAD : STATUS_LABEL_ALIVE)[connectionStatus(person)];
+  const en = currentLang() === 'en';
+  const map = person.isDeceased
+    ? (en ? STATUS_LABEL_DEAD_EN : STATUS_LABEL_DEAD)
+    : (en ? STATUS_LABEL_ALIVE_EN : STATUS_LABEL_ALIVE);
+  return map[connectionStatus(person)];
 }
 
 /* أقرب مناسبة قادمة خلال 7 أيام، إن وُجدت */
@@ -5290,7 +5306,10 @@ function renderCopyrightFooter(withLogo) {
       mainLine +
       nameLine +
       dateLine +
+      /* الدعاء بلفظه العربي دائمًا — له وقع لا تنقله ترجمة — ويظهر
+         معناه بالإنجليزية للواجهة الإنجليزية */
       '<p class="v2-copyright-dua" dir="rtl">اللهم اغفر لمطورها ولمستخدميها ولوالديهم وللمسلمين أجمعين</p>' +
+      (isEn ? '<p class="v2-copyright-dua-en">May Allah forgive its developer, all who use it, their parents, and the believers everywhere.</p>' : '') +
     '</div>'
   );
 }
@@ -5359,6 +5378,17 @@ function setTreePlan(plan) {
 }
 
 let settingsActiveTab = 'appearance';
+/* تبويبات فرعية داخل «التطبيق» — سبع بطاقات في عمود واحد تعني تمريرًا
+   طويلًا، والتبويب يجعل كلًّا منها شاشة واحدة */
+const APP_SECTIONS = [
+  { key: 'install', label: 'التثبيت', labelEn: 'Install' },
+  { key: 'tour',    label: 'الجولة',  labelEn: 'Tour' },
+  { key: 'lang',    label: 'اللغة',   labelEn: 'Language' },
+  { key: 'backup',  label: 'النسخة',  labelEn: 'Backup' },
+  { key: 'support', label: 'الدعم',   labelEn: 'Support' },
+  { key: 'about',   label: 'عن',      labelEn: 'About' },
+];
+let appActiveSection = 'install';
 /* تبويبات فرعية داخل «شجرتي» — ٣١ عدّادًا في قائمة واحدة تعني تمريرًا
    طويلًا، والتبويب يختصرها إلى شاشة واحدة */
 const SETTINGS_TAB_KEYS = ['appearance', 'circles', 'app'];
@@ -5425,47 +5455,65 @@ function settingsTabContent(tab, settings) {
     );
   }
   if (tab === 'app') {
-    return (
-      '<section class="v2-info-card" style="margin-bottom:14px" id="install-section">' +
-        '<h2 class="v2-notes-head"><span>' + t('install_app_label') + '</span></h2>' +
-        '<p class="v2-notes-empty" style="margin-bottom:10px" id="install-desc">' + t('install_app_desc') + '</p>' +
-        '<button type="button" class="v2-add-btn" id="install-btn">' + t('install_app_btn') + '</button>' +
-      '</section>' +
-      '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('how_it_works_label') + '</span></h2>' +
-        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('how_it_works_desc') + '</p>' +
-        '<a class="v2-add-btn" href="onboarding.html?tour=1">' + t('how_it_works_btn') + '</a>' +
-      '</section>' +
-      '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('language_label') + '</span></h2>' +
-        '<div class="v2-chip-row" id="language-picker">' +
-          '<button type="button" class="v2-chip' + (currentLang() === 'ar' ? ' is-active' : '') + '" data-lang="ar">' + t('language_ar') + '</button>' +
-          '<button type="button" class="v2-chip' + (currentLang() === 'en' ? ' is-active' : '') + '" data-lang="en">' + t('language_en') + '</button>' +
-        '</div>' +
-      '</section>' +
-      '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('backup_label') + '</span></h2>' +
-        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('backup_desc') + '</p>' +
-        '<button type="button" class="v2-add-btn" id="backup-export-btn">' + t('backup_export_btn') + '</button>' +
-        '<button type="button" class="v2-add-btn" style="margin-top:8px" id="backup-import-btn">' + t('backup_import_btn') + '</button>' +
-        '<input type="file" id="backup-import-input" accept="application/json" hidden />' +
-      '</section>' +
-      '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('factory_reset_label') + '</span></h2>' +
-        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('factory_reset_desc') + '</p>' +
-        '<button type="button" class="v2-danger-btn" id="factory-reset-btn">' + t('factory_reset_btn') + '</button>' +
-      '</section>' +
-      '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('support_label') + '</span></h2>' +
-        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('support_desc') + '</p>' +
-        '<a class="v2-add-btn" id="support-whatsapp-btn" href="' + supportWhatsAppLink() + '" target="_blank" rel="noopener">' + t('support_btn') + '</a>' +
-      '</section>' +
-      '<section class="v2-info-card">' +
-        '<h2 class="v2-notes-head"><span>' + t('about_app_label') + '</span></h2>' +
-        '<p class="v2-notes-empty">' + t('about_app_desc') + '</p>' +
-        renderCopyrightFooter(true) +
-      '</section>'
-    );
+    var sec = appActiveSection;
+    var picker = '<div class="v2-chip-row" id="app-section-picker">' +
+      APP_SECTIONS.map(function (o) {
+        return '<button type="button" class="v2-chip' + (o.key === sec ? ' is-active' : '') + '" data-app-section="' + o.key + '">' + (currentLang() === 'en' ? o.labelEn : o.label) + '</button>';
+      }).join('') + '</div>';
+    var body = '';
+    if (sec === 'install') {
+      body =
+        '<section class="v2-info-card" id="install-section">' +
+          '<h2 class="v2-notes-head"><span>' + t('install_app_label') + '</span></h2>' +
+          '<p class="v2-notes-empty" style="margin-bottom:10px" id="install-desc">' + t('install_app_desc') + '</p>' +
+          '<button type="button" class="v2-add-btn" id="install-btn">' + t('install_app_btn') + '</button>' +
+        '</section>';
+    } else if (sec === 'tour') {
+      body =
+        '<section class="v2-info-card">' +
+          '<h2 class="v2-notes-head"><span>' + t('how_it_works_label') + '</span></h2>' +
+          '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('how_it_works_desc') + '</p>' +
+          '<a class="v2-add-btn" href="onboarding.html?tour=1">' + t('how_it_works_btn') + '</a>' +
+        '</section>';
+    } else if (sec === 'lang') {
+      body =
+        '<section class="v2-info-card">' +
+          '<h2 class="v2-notes-head"><span>' + t('language_label') + '</span></h2>' +
+          '<div class="v2-chip-row" id="language-picker">' +
+            '<button type="button" class="v2-chip' + (currentLang() === 'ar' ? ' is-active' : '') + '" data-lang="ar">' + t('language_ar') + '</button>' +
+            '<button type="button" class="v2-chip' + (currentLang() === 'en' ? ' is-active' : '') + '" data-lang="en">' + t('language_en') + '</button>' +
+          '</div>' +
+        '</section>';
+    } else if (sec === 'backup') {
+      body =
+        '<section class="v2-info-card" style="margin-bottom:14px">' +
+          '<h2 class="v2-notes-head"><span>' + t('backup_label') + '</span></h2>' +
+          '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('backup_desc') + '</p>' +
+          '<button type="button" class="v2-add-btn" id="backup-export-btn">' + t('backup_export_btn') + '</button>' +
+          '<button type="button" class="v2-add-btn" style="margin-top:8px" id="backup-import-btn">' + t('backup_import_btn') + '</button>' +
+          '<input type="file" id="backup-import-input" accept="application/json" hidden />' +
+        '</section>' +
+        '<section class="v2-info-card">' +
+          '<h2 class="v2-notes-head"><span>' + t('factory_reset_label') + '</span></h2>' +
+          '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('factory_reset_desc') + '</p>' +
+          '<button type="button" class="v2-danger-btn" id="factory-reset-btn">' + t('factory_reset_btn') + '</button>' +
+        '</section>';
+    } else if (sec === 'support') {
+      body =
+        '<section class="v2-info-card">' +
+          '<h2 class="v2-notes-head"><span>' + t('support_label') + '</span></h2>' +
+          '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('support_desc') + '</p>' +
+          '<a class="v2-add-btn" id="support-whatsapp-btn" href="' + supportWhatsAppLink() + '" target="_blank" rel="noopener">' + t('support_btn') + '</a>' +
+        '</section>';
+    } else {
+      body =
+        '<section class="v2-info-card">' +
+          '<h2 class="v2-notes-head"><span>' + t('about_app_label') + '</span></h2>' +
+          '<p class="v2-notes-empty">' + t('about_app_desc') + '</p>' +
+          renderCopyrightFooter(true) +
+        '</section>';
+    }
+    return picker + body;
   }
   return '';
 }
@@ -5510,6 +5558,14 @@ function renderSettingsPage() {
     hsRenderNavIcons();
     renderSettingsPage();
   });
+  const appSectionPicker = root.querySelector('#app-section-picker');
+  if (appSectionPicker) appSectionPicker.addEventListener('click', function (e) {
+    const chip = e.target.closest('.v2-chip');
+    if (!chip) return;
+    appActiveSection = chip.dataset.appSection;
+    renderSettingsPage();
+  });
+
   const dialectPicker = root.querySelector('#dialect-picker');
   if (dialectPicker) dialectPicker.addEventListener('click', function (e) {
     const chip = e.target.closest('.v2-chip');
