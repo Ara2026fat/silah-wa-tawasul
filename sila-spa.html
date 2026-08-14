@@ -2201,7 +2201,6 @@ html[data-theme="night"] {
       </div>
 
       <ul class="v2-person-list" id="cat-list"></ul>
-      <div class="v2-page-footer" id="page-footer"></div>
           </div>
   
 </div>
@@ -2346,7 +2345,6 @@ html[data-theme="night"] {
         </label>
         <button type="submit" class="v2-submit-btn" id="submit-btn">حفظ</button>
       </form>
-      <div class="v2-page-footer" id="page-footer"></div>
     </div>
   
 </div>
@@ -2375,7 +2373,6 @@ html[data-theme="night"] {
     </header>
     <div class="v2-inner-content">
       <div id="reminder-list"></div>
-      <div class="v2-page-footer" id="page-footer"></div>
     </div>
   
 </div>
@@ -4773,7 +4770,6 @@ function renderAddPersonForm() {
     }
   };
 
-  document.querySelectorAll('[id="page-footer"]').forEach(function (el) { el.innerHTML = renderCopyrightFooter(false); });
 }
 
 /* ---------- 9) صفحة الملف الشخصي ---------- */
@@ -5389,6 +5385,13 @@ const APP_SECTIONS = [
   { key: 'about',   label: 'عن',      labelEn: 'About' },
 ];
 let appActiveSection = 'install';
+/* تبويبات فرعية داخل «دوائري» — أسماء الفئات ستة حقول تجعل الصفحة
+   تنزل طويلًا */
+const CIRCLE_SECTIONS = [
+  { key: 'timing', label: 'التذكير', labelEn: 'Timing' },
+  { key: 'names',  label: 'الأسماء', labelEn: 'Names' },
+];
+let circleActiveSection = 'timing';
 /* تبويبات فرعية داخل «شجرتي» — ٣١ عدّادًا في قائمة واحدة تعني تمريرًا
    طويلًا، والتبويب يختصرها إلى شاشة واحدة */
 const SETTINGS_TAB_KEYS = ['appearance', 'circles', 'app'];
@@ -5427,16 +5430,24 @@ function settingsTabContent(tab, settings) {
     );
   }
   if (tab === 'circles') {
-    return (
-      '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('default_interval_label') + '</span></h2>' +
-        '<div class="v2-chip-row" id="default-interval-picker">' +
-          INTERVAL_OPTIONS.map(function (o) {
-            return '<button type="button" class="v2-chip' + (o.value === settings.defaultIntervalDays ? ' is-active' : '') + '" data-value="' + o.value + '">' + intervalLabel(o) + '</button>';
-          }).join('') +
-        '</div>' +
-        '<label class="v2-checkbox-row" style="margin-top:10px"><input type="checkbox" id="occasion-toggle"' + (settings.occasionRemindersEnabled ? ' checked' : '') + '> ' + t('occasion_reminder_desc') + '</label>' +
-      '</section>' +
+    var csec = circleActiveSection;
+    var cpicker = '<div class="v2-chip-row" id="circle-section-picker">' +
+      CIRCLE_SECTIONS.map(function (o) {
+        return '<button type="button" class="v2-chip' + (o.key === csec ? ' is-active' : '') + '" data-circle-section="' + o.key + '">' + (currentLang() === 'en' ? o.labelEn : o.label) + '</button>';
+      }).join('') + '</div>';
+    if (csec === 'timing') {
+      return cpicker +
+        '<section class="v2-info-card">' +
+          '<h2 class="v2-notes-head"><span>' + t('default_interval_label') + '</span></h2>' +
+          '<div class="v2-chip-row" id="default-interval-picker">' +
+            INTERVAL_OPTIONS.map(function (o) {
+              return '<button type="button" class="v2-chip' + (o.value === settings.defaultIntervalDays ? ' is-active' : '') + '" data-value="' + o.value + '">' + intervalLabel(o) + '</button>';
+            }).join('') +
+          '</div>' +
+          '<label class="v2-checkbox-row" style="margin-top:10px"><input type="checkbox" id="occasion-toggle"' + (settings.occasionRemindersEnabled ? ' checked' : '') + '> ' + t('occasion_reminder_desc') + '</label>' +
+        '</section>';
+    }
+    return cpicker +
       '<section class="v2-info-card">' +
         '<h2 class="v2-notes-head"><span>' + t('custom_names_label') + '</span></h2>' +
         '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('custom_names_hint') + '</p>' +
@@ -5451,8 +5462,7 @@ function settingsTabContent(tab, settings) {
             );
           }).join('') +
         '</div>' +
-      '</section>'
-    );
+      '</section>';
   }
   if (tab === 'app') {
     var sec = appActiveSection;
@@ -5558,6 +5568,14 @@ function renderSettingsPage() {
     hsRenderNavIcons();
     renderSettingsPage();
   });
+  const circleSectionPicker = root.querySelector('#circle-section-picker');
+  if (circleSectionPicker) circleSectionPicker.addEventListener('click', function (e) {
+    const chip = e.target.closest('.v2-chip');
+    if (!chip) return;
+    circleActiveSection = chip.dataset.circleSection;
+    renderSettingsPage();
+  });
+
   const appSectionPicker = root.querySelector('#app-section-picker');
   if (appSectionPicker) appSectionPicker.addEventListener('click', function (e) {
     const chip = e.target.closest('.v2-chip');
@@ -5990,7 +6008,6 @@ function v2RenderHome() {
     }
   }
 
-  document.querySelectorAll('[id="page-footer"]').forEach(function (el) { el.innerHTML = renderCopyrightFooter(false); });
 }
 
 /* تموّج ضوء خفيف عند لمس أي بطاقة — بلا مكتبات، إحداثيات اللمس الفعلية */
@@ -6110,7 +6127,6 @@ function v2RenderReminders() {
     '</div>'
   );
 
-  document.querySelectorAll('[id="page-footer"]').forEach(function (el) { el.innerHTML = renderCopyrightFooter(false); });
 }
 
 /* ---------- صفحة الملف الشخصي (v2) ---------- */
@@ -6158,7 +6174,7 @@ function v2RenderProfilePage() {
     '</div>' +
     '<div class="v2-info-card" style="margin-bottom:14px" id="memories-section"></div>' +
     '<div class="v2-info-card" id="history-section"></div>' +
-    renderCopyrightFooter(false) + '';
+    '';
 
   renderMemoriesSection(person.id, memories, 2);
   renderHistorySection(person.id, personInteractionLog(person), 3);
@@ -6375,7 +6391,6 @@ function v2RenderCategoryScreen() {
         '<p>' + emptyText.desc + '</p>' +
         '<a class="v2-add-btn" href="' + addHref + '">' + hsIcon('reminders', 15) + ' ' + t('add_now') + '</a>' +
       '</div>';
-    document.querySelectorAll('[id="page-footer"]').forEach(function (el) { el.innerHTML = renderCopyrightFooter(false); });
     return;
   }
 
@@ -6383,7 +6398,6 @@ function v2RenderCategoryScreen() {
     ? people.map(v2CategoryCardHtml).join('')
     : '<div class="v2-parents-empty"><p>' + t('no_results_filter') + '</p></div>';
 
-  document.querySelectorAll('[id="page-footer"]').forEach(function (el) { el.innerHTML = renderCopyrightFooter(false); });
 }
 
 /* مكوّن قابل لإعادة الاستخدام: نافذة الملاحظات (تُستخدم بكل شاشات التصنيف) */
