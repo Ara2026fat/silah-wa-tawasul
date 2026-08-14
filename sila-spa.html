@@ -674,6 +674,18 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   gap: 8px;
   margin-bottom: 12px;
 }
+.ft-group-row { gap: 6px; margin-bottom: 10px; }
+.ft-group-row .v2-chip { padding: 7px 11px; min-height: 32px; font-size: 12px; }
+.ft-branch-row { margin-bottom: 12px; }
+/* الحفظ ملتصق أسفل الشاشة: يقصر الصفحة ويبقى في المتناول مهما طال الفرع */
+.ft-save-sticky {
+  position: sticky;
+  bottom: calc(74px + env(safe-area-inset-bottom));
+  z-index: 4;
+  box-shadow: 0 10px 26px -8px rgba(48, 42, 38, 0.4);
+}
+.ft-branch-row .v2-chip { background: var(--bg); font-size: 11.5px; }
+.ft-branch-row .v2-chip.is-active { background: var(--turquoise); color: #fff; }
 .v2-chip {
   padding: 9px 15px;
   min-height: 36px;
@@ -1626,7 +1638,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 7px 2px;
+  padding: 4px 2px;
   border-bottom: 1px solid var(--line);
 }
 .tp-row:last-child { border-bottom: none; }
@@ -1700,10 +1712,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 8px;
-  align-items: start;
-  padding: 12px 13px;
-  margin-bottom: 9px;
+  gap: 7px;
+  align-items: center;
+  padding: 7px 10px;
+  margin-bottom: 6px;
   border-radius: 16px;
   background: var(--surface);
   box-shadow: var(--shadow);
@@ -1712,7 +1724,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .ft-node {
   position: absolute;
   inset-inline-start: -16px;
-  top: 22px;
+  top: 18px;
   width: 9px;
   height: 9px;
   border-radius: 50%;
@@ -1720,11 +1732,23 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   box-shadow: 0 0 0 3px var(--turquoise-tint);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--turquoise) 20%, transparent);
 }
-.fb-label { grid-column: 1 / -1; font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
+.fb-label { grid-column: 1 / -1; font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 0; line-height: 1.4; }
 .fb-inputs { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fb-more { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.fb-more[hidden] { display: none; }
+.fb-more-btn {
+  width: 34px; height: 34px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800;
+  background: var(--bg); color: var(--text-muted);
+  transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
+}
+.fb-more-btn:active { transform: scale(0.9); }
+.fb-actions { flex-direction: row; }
+.fb-import, .fb-remove { width: 34px; height: 34px; border-radius: 11px; }
 .fb-inputs input[type="text"], .fb-inputs input[type="tel"] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 9px 11px;
   border-radius: 12px;
   border: 1px solid var(--line);
   background: var(--bg);
@@ -2292,7 +2316,7 @@ html[data-theme="night"] {
         <div id="ft-names" hidden>
           <button type="button" class="ft-back-counts" id="ft-back-counts">‹ تعديل الأعداد</button>
           <div id="ft-branches"></div>
-          <button type="button" class="v2-submit-btn" id="fb-next-btn">احفظ الشجرة كاملة</button>
+          <button type="button" class="v2-submit-btn ft-save-sticky" id="fb-next-btn">احفظ الشجرة كاملة</button>
         </div>
       </div>
 
@@ -4156,10 +4180,48 @@ function initSmartAdd() {
   };
   /* ترتيب الفروع في الشجرة الموحّدة: أسرة(٥) ثم أقارب(٦) ثم دائرة(٢) */
   var FT_FOCUS_BRANCH = { parents: 0, siblings: 1, family: 2, relatives: 5, circle: 11 };
-  var TREE_SECTION_LABELS = {
-    family: 'أسرتي', grandkids: 'أحفادي', grandparents: 'أجدادي',
-    paternal: 'فرع أبي', maternal: 'فرع أمي', nephews: 'أبناء إخوتي', circle: 'أصدقائي وزملائي',
-  };
+  /* الشجرة طويلة جدًا في شاشة واحدة — نقسّمها مجموعات، وكل مجموعة
+     تظهر وحدها في خطوتَي الأعداد والأسماء معًا */
+  var TREE_GROUPS = [
+    { key: 'family',       ar: 'أسرتي',        en: 'Family',        branches: [0, 1, 2, 4] },
+    { key: 'grandkids',    ar: 'أحفادي',       en: 'Grandchildren', branches: [3] },
+    { key: 'grandparents', ar: 'أجدادي',       en: 'Grandparents',  branches: [5] },
+    { key: 'paternal',     ar: 'فرع أبي',      en: "Father's side", branches: [6, 7] },
+    { key: 'maternal',     ar: 'فرع أمي',      en: "Mother's side", branches: [8, 9] },
+    { key: 'nephews',      ar: 'أبناء إخوتي',  en: 'Nieces/nephews', branches: [10] },
+    { key: 'circle',       ar: 'أصدقائي',      en: 'Friends',       branches: [11, 12] },
+  ];
+  var ftGroup = 'family';
+  var ftBranchIdx = null;
+  /* قواميس الإنجليزية للشجرة — كانت الشجرة كلها عربية داخل الواجهة
+     الإنجليزية */
+  var FT_EN_BRANCH = {"الجذر — والداي": "Roots — my parents", "الفرع الأول — إخوتي وأخواتي": "Siblings", "الفرع الثاني — أسرتي": "My own family", "الفرع الثالث — أحفادي": "Grandchildren", "فرع متفرّع — والدا الزوجة": "Spouse's parents", "الجذر — أجدادي": "Roots — grandparents", "فرع أبي — أعمامي وعمّاتي": "Father's side — uncles & aunts", "يتفرّع منه — أبناء العم والعمة": "Their children", "فرع أمي — أخوالي وخالاتي": "Mother's side — uncles & aunts", "يتفرّع منه — أبناء الخال والخالة": "Their children", "فرع إخوتي — أبناؤهم": "Siblings' children", "الفرع الأول — أصدقائي": "Friends", "الفرع الثاني — زملائي": "Colleagues"};
+  var FT_EN_ROW = {"أبي": "Father", "أمي": "Mother", "أخي": "Brother", "أختي": "Sister", "زوجتي": "Wife", "زوجي": "Husband", "ابني": "Son", "ابنتي": "Daughter", "حفيدي": "Grandson", "حفيدتي": "Granddaughter", "والد الزوجة": "Wife's father", "والدة الزوجة": "Wife's mother", "جدي": "Grandfather", "جدتي": "Grandmother", "عمي": "Uncle", "عمتي": "Aunt", "ابن عمي": "Uncle's son", "بنت عمي": "Uncle's daughter", "ابن عمتي": "Aunt's son", "بنت عمتي": "Aunt's daughter", "خالي": "Maternal uncle", "خالتي": "Maternal aunt", "ابن خالي": "M. uncle's son", "بنت خالي": "M. uncle's daughter", "ابن خالتي": "M. aunt's son", "بنت خالتي": "M. aunt's daughter", "ابن أخي": "Nephew (br.)", "بنت أخي": "Niece (br.)", "ابن أختي": "Nephew (sis.)", "بنت أختي": "Niece (sis.)", "صديقي المقرّب": "Close friend", "صديقي": "Friend", "زميلي": "Colleague"};
+  var FT_EN_ADD = {"＋ أخ": "+ Brother", "＋ أخت": "+ Sister", "＋ ابن": "+ Son", "＋ ابنة": "+ Daughter", "＋ حفيد": "+ Grandson", "＋ حفيدة": "+ Granddaughter", "＋ جد": "+ Grandfather", "＋ جدة": "+ Grandmother", "＋ عم": "+ Uncle", "＋ عمة": "+ Aunt", "＋ ابن عم": "+ Uncle's son", "＋ بنت عم": "+ Uncle's daughter", "＋ ابن عمة": "+ Aunt's son", "＋ بنت عمة": "+ Aunt's daughter", "＋ خال": "+ M. uncle", "＋ خالة": "+ M. aunt", "＋ ابن خال": "+ M. uncle's son", "＋ بنت خال": "+ M. uncle's daughter", "＋ ابن خالة": "+ M. aunt's son", "＋ بنت خالة": "+ M. aunt's daughter", "＋ ابن أخ": "+ Nephew (br.)", "＋ بنت أخ": "+ Niece (br.)", "＋ ابن أخت": "+ Nephew (sis.)", "＋ بنت أخت": "+ Niece (sis.)", "＋ صديق مقرّب": "+ Close friend", "＋ صديق": "+ Friend", "＋ زميل": "+ Colleague"};
+  function ftTx(dict, ar) { return (currentLang() === 'en' && dict[ar]) ? dict[ar] : ar; }
+  function ftGroupLabel(g) { return currentLang() === 'en' ? g.en : g.ar; }
+  /* اسم مختصر للفرع يصلح كرقاقة: ما بعد الشرطة إن وُجدت */
+  function ftBranchChipLabel(br) {
+    var full = ftLabelBranch(br);
+    var parts = full.split('—');
+    return (parts.length > 1 ? parts[parts.length - 1] : full).trim();
+  }
+  function ftBranchPicker(spec, group) {
+    if (group.branches.length < 2) return '';
+    return '<div class="v2-chip-row ft-group-row ft-branch-row">' +
+      group.branches.map(function (bi) {
+        var br = spec.branches[bi];
+        if (!br) return '';
+        if (br.requiresSpouse && ftState.spouseType === 'none') return '';
+        return '<button type="button" class="v2-chip' + (bi === ftBranchIdx ? ' is-active' : '') + '" data-tree-branch="' + bi + '">' + ftBranchChipLabel(br) + '</button>';
+      }).join('') + '</div>';
+  }
+  function ftGroupPicker() {
+    return '<div class="v2-chip-row ft-group-row">' +
+      TREE_GROUPS.map(function (g) {
+        return '<button type="button" class="v2-chip' + (g.key === ftGroup ? ' is-active' : '') + '" data-tree-group="' + g.key + '">' + ftGroupLabel(g) + '</button>';
+      }).join('') + '</div>';
+  }
   var ftState = { spouseType: 'none' };
   var ftSeeded = { all: false, family: false, relatives: false, circle: false };
   var ftCanImport = ('contacts' in navigator && 'ContactsManager' in window);
@@ -4175,6 +4237,10 @@ function initSmartAdd() {
 
   /* أهل الزوجة والزوج يتبدّل وصفهما مع اختيار الزوج/الزوجة */
   function ftLabel(role, base) {
+    var out = ftLabelAr(role, base);
+    return ftTx(FT_EN_ROW, out);
+  }
+  function ftLabelAr(role, base) {
     if (role === 'spouse') return ftState.spouseType === 'husband' ? 'زوجي' : 'زوجتي';
     var isWife = ftState.spouseType !== 'husband';
     if (role === 'father_in_law') return isWife ? 'والد الزوجة' : 'والد الزوج';
@@ -4184,18 +4250,24 @@ function initSmartAdd() {
 
   function ftRowHtml(role, label, data, index) {
     var idx = (typeof index === 'number') ? index : '';
+    var isEn = currentLang() === 'en';
     return (
       '<div class="ft-row" data-role="' + role + '" data-index="' + idx + '">' +
         '<span class="ft-node" aria-hidden="true"></span>' +
         '<span class="fb-label">' + label + '</span>' +
         '<div class="fb-inputs">' +
-          '<input type="text" class="fb-name" placeholder="الاسم" value="' + escapeHtml(data.name || '') + '">' +
-          '<input type="tel" dir="ltr" class="fb-phone" placeholder="رقم الهاتف (اختياري)" value="' + escapeHtml(data.phone || '') + '">' +
-          '<label class="ft-dead"><input type="checkbox" class="fb-dead"' + (data.dead ? ' checked' : '') + '> رحمه الله — أذكره بالدعاء</label>' +
+          '<input type="text" class="fb-name" placeholder="' + (isEn ? 'Name' : 'الاسم') + '" value="' + escapeHtml(data.name || '') + '">' +
+          /* الرقم وخيار الدعاء مطويّان: الشجرة للأسماء أولًا، والباقي
+             عند الحاجة — وبهذا يسع الفرع شاشة واحدة */
+          '<div class="fb-more"' + (data.phone || data.dead ? '' : ' hidden') + '>' +
+            '<input type="tel" dir="ltr" class="fb-phone" placeholder="' + (isEn ? 'Phone (optional)' : 'رقم الهاتف (اختياري)') + '" value="' + escapeHtml(data.phone || '') + '">' +
+            '<label class="ft-dead"><input type="checkbox" class="fb-dead"' + (data.dead ? ' checked' : '') + '> ' + (isEn ? 'Passed away — remember in prayer' : 'رحمه الله — أذكره بالدعاء') + '</label>' +
+          '</div>' +
         '</div>' +
         '<div class="fb-actions">' +
-          (ftCanImport ? '<button type="button" class="fb-import" aria-label="اختر من جهات الاتصال">👤</button>' : '') +
-          (ftIsMulti(role) ? '<button type="button" class="fb-remove" aria-label="حذف">×</button>' : '') +
+          '<button type="button" class="fb-more-btn" aria-label="' + (isEn ? 'More' : 'المزيد') + '">⋯</button>' +
+          (ftCanImport ? '<button type="button" class="fb-import" aria-label="' + (isEn ? 'Pick from contacts' : 'اختر من جهات الاتصال') + '">👤</button>' : '') +
+          (ftIsMulti(role) ? '<button type="button" class="fb-remove" aria-label="' + (isEn ? 'Remove' : 'حذف') + '">×</button>' : '') +
         '</div>' +
       '</div>'
     );
@@ -4227,8 +4299,17 @@ function initSmartAdd() {
     var spec = TREE_SPECS[ftMode];
     document.getElementById('ft-hint').textContent = spec.hint;
     var html = '';
+    var group = TREE_GROUPS.filter(function (g) { return g.key === ftGroup; })[0] || TREE_GROUPS[0];
+    /* فرع واحد في كل مرة — التنقّل بالتبويب لا بالنزول */
+    var visible = group.branches.filter(function (bi) {
+      var br = spec.branches[bi];
+      return br && !(br.requiresSpouse && ftState.spouseType === 'none');
+    });
+    if (visible.indexOf(ftBranchIdx) === -1) ftBranchIdx = visible.length ? visible[0] : null;
     var focusBranch = FT_FOCUS_BRANCH[ftFocusCat];
+    html += ftGroupPicker() + ftBranchPicker(spec, group);
     spec.branches.forEach(function (br, bi) {
+      if (bi !== ftBranchIdx) return;
       /* فرع أهل الزوجة لا معنى له بلا زوج/زوجة — نطويه بدل عرض
          حقلين معلّقين في الهواء */
       if (br.requiresSpouse && ftState.spouseType === 'none') return;
@@ -4237,7 +4318,7 @@ function initSmartAdd() {
         if (r.role === 'spouse' && ftState.spouseType === 'none') return;
         if (r.multi) {
           (ftState[r.role] || []).forEach(function (d, i) {
-            rows += ftRowHtml(r.role, ftLabel(r.role, r.label) + ' ' + toArabicDigits(i + 1), d, i);
+            rows += ftRowHtml(r.role, ftLabel(r.role, r.label) + ' ' + (currentLang() === 'en' ? (i + 1) : toArabicDigits(i + 1)), d, i);
           });
         } else {
           rows += ftRowHtml(r.role, ftLabel(r.role, r.label), ftState[r.role] || ftBlank());
@@ -4246,15 +4327,18 @@ function initSmartAdd() {
       var adds = '';
       if (br.adds) {
         adds = '<div class="fb-add-row">' + br.adds.map(function (a) {
-          return '<button type="button" class="fb-addbtn" data-add="' + a[0] + '">' + a[1] + '</button>';
+          return '<button type="button" class="fb-addbtn" data-add="' + a[0] + '">' + ftTx(FT_EN_ADD, a[1]) + '</button>';
         }).join('') + '</div>';
       }
       var picker = '';
       if (br.spousePicker) {
-        picker = '<div class="v2-field"><label>الزوج أم الزوجة؟</label>' +
+        var enSp = currentLang() === 'en';
+        picker = '<div class="v2-field"><label>' + (enSp ? 'Spouse' : 'الزوج أم الزوجة؟') + '</label>' +
           '<div class="v2-chip-row" id="fb-spouse-picker">' +
             ['wife', 'husband', 'none'].map(function (k) {
-              var lbl = k === 'wife' ? 'زوجتي' : (k === 'husband' ? 'زوجي' : 'لا يوجد');
+              var lbl = enSp
+                ? (k === 'wife' ? 'Wife' : (k === 'husband' ? 'Husband' : 'None'))
+                : (k === 'wife' ? 'زوجتي' : (k === 'husband' ? 'زوجي' : 'لا يوجد'));
               return '<button type="button" class="v2-chip' + (ftState.spouseType === k ? ' is-active' : '') + '" data-spouse="' + k + '">' + lbl + '</button>';
             }).join('') +
           '</div></div>';
@@ -4268,8 +4352,11 @@ function initSmartAdd() {
   }
 
   function ftLabelBranch(br) {
-    if (br.requiresSpouse) return ftState.spouseType === 'husband' ? 'فرع متفرّع — والدا الزوج' : 'فرع متفرّع — والدا الزوجة';
-    return br.title;
+    if (br.requiresSpouse) {
+      if (currentLang() === 'en') return "Spouse's parents";
+      return ftState.spouseType === 'husband' ? 'فرع متفرّع — والدا الزوج' : 'فرع متفرّع — والدا الزوجة';
+    }
+    return ftTx(FT_EN_BRANCH, br.title);
   }
 
   function ftSeed(mode) {
@@ -4293,26 +4380,20 @@ function initSmartAdd() {
      نفسها: كم عددهم؟ ← من هم؟ */
   function ftRenderCounts() {
     var plan = getTreePlan();
-    var allowed = TREE_COUNT_SECTIONS[ftMode] || [];
     var inSection = null;
-    var html = '';
+    var isEn = currentLang() === 'en';
+    var html = ftGroupPicker();
     TREE_PLAN_FIELDS.forEach(function (f) {
-      if (f.section) {
-        inSection = f.section;
-        if (allowed.indexOf(inSection) !== -1 && allowed.length > 1) {
-          html += '<h3 class="tp-section">' + (TREE_SECTION_LABELS[inSection] || '') + '</h3>';
-        }
-        return;
-      }
-      if (allowed.indexOf(inSection) === -1) return;
+      if (f.section) { inSection = f.section; return; }
+      if (inSection !== ftGroup) return;
       var v = plan[f.key] || 0;
       html +=
         '<div class="tp-row">' +
-          '<span class="tp-label">' + f.label + '</span>' +
+          '<span class="tp-label">' + (isEn && f.labelEn ? f.labelEn : f.label) + '</span>' +
           '<div class="tp-stepper" data-key="' + f.key + '" data-max="' + f.max + '">' +
-            '<button type="button" class="tp-btn" data-step="-1" aria-label="نقص">−</button>' +
-            '<input type="number" class="tp-value" inputmode="numeric" min="0" max="' + f.max + '" value="' + v + '" aria-label="' + f.label + '">' +
-            '<button type="button" class="tp-btn" data-step="1" aria-label="زيادة">+</button>' +
+            '<button type="button" class="tp-btn" data-step="-1" aria-label="-">−</button>' +
+            '<input type="number" class="tp-value" inputmode="numeric" min="0" max="' + f.max + '" value="' + v + '" aria-label="' + (isEn && f.labelEn ? f.labelEn : f.label) + '">' +
+            '<button type="button" class="tp-btn" data-step="1" aria-label="+">+</button>' +
           '</div>' +
         '</div>';
     });
@@ -4323,9 +4404,14 @@ function initSmartAdd() {
     var isCounts = step === 'counts';
     document.getElementById('ft-counts').hidden = !isCounts;
     document.getElementById('ft-names').hidden = isCounts;
+    var en = currentLang() === 'en';
     document.getElementById('ft-hint').textContent = isCounts
-      ? 'أولًا: كم عددهم؟ حدّد الأعداد، ثم اكتب الأسماء.'
-      : TREE_SPECS[ftMode].hint;
+      ? (en ? 'First: how many? Set the counts, then type the names.' : 'أولًا: كم عددهم؟ حدّد الأعداد، ثم اكتب الأسماء.')
+      : (en ? 'Your whole tree: parents, family, grandchildren, uncles, aunts, friends and colleagues.' : TREE_SPECS[ftMode].hint);
+    document.getElementById('ft-counts-next').textContent = en ? 'Next — type the names' : 'التالي — اكتب الأسماء';
+    document.getElementById('ft-back-counts').textContent = en ? '‹ Edit counts' : '‹ تعديل الأعداد';
+    document.getElementById('ft-back-picker').textContent = en ? '‹ Back to circles' : '‹ رجوع للدوائر';
+    document.getElementById('fb-next-btn').textContent = en ? 'Save the whole tree' : 'احفظ الشجرة كاملة';
     if (isCounts) ftRenderCounts();
   }
 
@@ -4408,6 +4494,22 @@ function initSmartAdd() {
   var fbPanel = document.getElementById('family-builder');
   if (fbPanel) {
     fbPanel.addEventListener('click', function (e) {
+      var g = e.target.closest('[data-tree-group]');
+      if (g) {
+        /* نقرأ ما كُتب قبل تبديل المجموعة، وإلا ضاع */
+        if (!document.getElementById('ft-names').hidden) ftCollect();
+        ftGroup = g.dataset.treeGroup;
+        ftBranchIdx = null;
+        if (document.getElementById('ft-counts').hidden) ftRender(); else ftRenderCounts();
+        return;
+      }
+      var bchip = e.target.closest('[data-tree-branch]');
+      if (bchip) {
+        ftCollect();
+        ftBranchIdx = parseInt(bchip.dataset.treeBranch, 10);
+        ftRender();
+        return;
+      }
       var add = e.target.closest('.fb-addbtn');
       if (add) {
         ftCollect();
@@ -4432,6 +4534,12 @@ function initSmartAdd() {
         ftRender();
         return;
       }
+      var more = e.target.closest('.fb-more-btn');
+      if (more) {
+        var mrow = more.closest('.ft-row').querySelector('.fb-more');
+        mrow.hidden = !mrow.hidden;
+        return;
+      }
       var imp = e.target.closest('.fb-import');
       if (imp) {
         var r2 = imp.closest('.ft-row');
@@ -4441,6 +4549,7 @@ function initSmartAdd() {
             var c = contacts[0];
             r2.querySelector('.fb-name').value = (c.name && c.name[0]) ? c.name[0] : '';
             r2.querySelector('.fb-phone').value = (c.tel && c.tel[0]) ? c.tel[0] : '';
+            r2.querySelector('.fb-more').hidden = false;
           })
           .catch(function () { /* المستخدم ألغى */ });
       }
@@ -4468,7 +4577,7 @@ function initSmartAdd() {
           else push(ftState[r.role], r.role);
         });
       });
-      if (!planned.length) { toast('اكتب اسمًا واحدًا على الأقل.', 'info'); return; }
+      if (!planned.length) { toast(currentLang() === 'en' ? 'Type at least one name.' : 'اكتب اسمًا واحدًا على الأقل.', 'info'); return; }
       planned.forEach(function (p) {
         PeopleRepo.create({
           name: p.name,
@@ -5324,43 +5433,43 @@ const TREE_PLAN_DEFAULT = {
 };
 const TREE_PLAN_FIELDS = [
   { section: 'family' },
-  { key: 'father',   label: 'الوالد',             max: 1 },
-  { key: 'mother',   label: 'الوالدة',            max: 1 },
-  { key: 'brother',  label: 'الإخوة',             max: 20 },
-  { key: 'sister',   label: 'الأخوات',            max: 20 },
-  { key: 'spouse',   label: 'الزوج/الزوجة',       max: 4 },
-  { key: 'son',      label: 'الأبناء',            max: 20 },
-  { key: 'daughter', label: 'البنات',             max: 20 },
-  { key: 'inlaws',   label: 'والدا الزوج/الزوجة', max: 1 },
+  { key: 'father',   label: 'الوالد',             max: 1 , labelEn: 'Father' },
+  { key: 'mother',   label: 'الوالدة',            max: 1 , labelEn: 'Mother' },
+  { key: 'brother',  label: 'الإخوة',             max: 20 , labelEn: 'Brothers' },
+  { key: 'sister',   label: 'الأخوات',            max: 20 , labelEn: 'Sisters' },
+  { key: 'spouse',   label: 'الزوج/الزوجة',       max: 4 , labelEn: 'Spouse' },
+  { key: 'son',      label: 'الأبناء',            max: 20 , labelEn: 'Sons' },
+  { key: 'daughter', label: 'البنات',             max: 20 , labelEn: 'Daughters' },
+  { key: 'inlaws',   label: 'والدا الزوج/الزوجة', max: 1 , labelEn: 'Spouse\'s parents' },
   { section: 'grandkids' },
-  { key: 'grandson', label: 'الأحفاد',            max: 30 },
-  { key: 'granddaughter', label: 'الحفيدات',      max: 30 },
+  { key: 'grandson', label: 'الأحفاد',            max: 30 , labelEn: 'Grandsons' },
+  { key: 'granddaughter', label: 'الحفيدات',      max: 30 , labelEn: 'Granddaughters' },
   { section: 'grandparents' },
-  { key: 'grandfather', label: 'الأجداد',      max: 4 },
-  { key: 'grandmother', label: 'الجدّات',      max: 4 },
+  { key: 'grandfather', label: 'الأجداد',      max: 4 , labelEn: 'Grandfathers' },
+  { key: 'grandmother', label: 'الجدّات',      max: 4 , labelEn: 'Grandmothers' },
   { section: 'paternal' },
-  { key: 'uncle_paternal', label: 'الأعمام',   max: 20 },
-  { key: 'aunt_paternal',  label: 'العمّات',   max: 20 },
-  { key: 'cousin_uncle',   label: 'أبناء العم',  max: 30 },
-  { key: 'cousin_uncle_f', label: 'بنات العم',   max: 30 },
-  { key: 'cousin_aunt_pat',   label: 'أبناء العمة', max: 30 },
-  { key: 'cousin_aunt_pat_f', label: 'بنات العمة',  max: 30 },
+  { key: 'uncle_paternal', label: 'الأعمام',   max: 20 , labelEn: 'Paternal uncles' },
+  { key: 'aunt_paternal',  label: 'العمّات',   max: 20 , labelEn: 'Paternal aunts' },
+  { key: 'cousin_uncle',   label: 'أبناء العم',  max: 30 , labelEn: 'Uncle\'s sons' },
+  { key: 'cousin_uncle_f', label: 'بنات العم',   max: 30 , labelEn: 'Uncle\'s daughters' },
+  { key: 'cousin_aunt_pat',   label: 'أبناء العمة', max: 30 , labelEn: 'Aunt\'s sons' },
+  { key: 'cousin_aunt_pat_f', label: 'بنات العمة',  max: 30 , labelEn: 'Aunt\'s daughters' },
   { section: 'maternal' },
-  { key: 'uncle_maternal', label: 'الأخوال',   max: 20 },
-  { key: 'aunt_maternal',  label: 'الخالات',   max: 20 },
-  { key: 'cousin_uncle_mat',   label: 'أبناء الخال',  max: 30 },
-  { key: 'cousin_uncle_mat_f', label: 'بنات الخال',   max: 30 },
-  { key: 'cousin_aunt_mat',    label: 'أبناء الخالة', max: 30 },
-  { key: 'cousin_aunt_mat_f',  label: 'بنات الخالة',  max: 30 },
+  { key: 'uncle_maternal', label: 'الأخوال',   max: 20 , labelEn: 'Maternal uncles' },
+  { key: 'aunt_maternal',  label: 'الخالات',   max: 20 , labelEn: 'Maternal aunts' },
+  { key: 'cousin_uncle_mat',   label: 'أبناء الخال',  max: 30 , labelEn: 'Maternal uncle\'s sons' },
+  { key: 'cousin_uncle_mat_f', label: 'بنات الخال',   max: 30 , labelEn: 'Maternal uncle\'s daughters' },
+  { key: 'cousin_aunt_mat',    label: 'أبناء الخالة', max: 30 , labelEn: 'Maternal aunt\'s sons' },
+  { key: 'cousin_aunt_mat_f',  label: 'بنات الخالة',  max: 30 , labelEn: 'Maternal aunt\'s daughters' },
   { section: 'nephews' },
-  { key: 'nephew_brother', label: 'أبناء الإخوة', max: 30 },
-  { key: 'niece_brother',  label: 'بنات الإخوة',  max: 30 },
-  { key: 'nephew_sister',  label: 'أبناء الأخوات', max: 30 },
-  { key: 'niece_sister',   label: 'بنات الأخوات',  max: 30 },
+  { key: 'nephew_brother', label: 'أبناء الإخوة', max: 30 , labelEn: 'Brothers\' sons' },
+  { key: 'niece_brother',  label: 'بنات الإخوة',  max: 30 , labelEn: 'Brothers\' daughters' },
+  { key: 'nephew_sister',  label: 'أبناء الأخوات', max: 30 , labelEn: 'Sisters\' sons' },
+  { key: 'niece_sister',   label: 'بنات الأخوات',  max: 30 , labelEn: 'Sisters\' daughters' },
   { section: 'circle' },
-  { key: 'close_friend', label: 'الأصدقاء المقرّبون', max: 100 },
-  { key: 'friend',       label: 'الأصدقاء',          max: 100 },
-  { key: 'coworker',     label: 'زملاء العمل',       max: 100 },
+  { key: 'close_friend', label: 'الأصدقاء المقرّبون', max: 100 , labelEn: 'Close friends' },
+  { key: 'friend',       label: 'الأصدقاء',          max: 100 , labelEn: 'Friends' },
+  { key: 'coworker',     label: 'زملاء العمل',       max: 100 , labelEn: 'Colleagues' },
 ];
 function getTreePlan() {
   try {
