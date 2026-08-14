@@ -1323,7 +1323,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 10px 20px calc(98px + env(safe-area-inset-bottom));
+  padding: 8px 18px calc(84px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1402,7 +1402,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  /* البطاقات تتمدّد لتملأ ما بقي من الشاشة بدل أن تتكدّس في الأعلى
+     وتترك فراغًا ميتًا أسفلها */
+  grid-auto-rows: 1fr;
+  flex: 1;
+  min-height: 0;
+  gap: 12px;
 }
 
 /* ---------- البطاقة السداسية — خلية نحل حقيقية ---------- */
@@ -1410,9 +1415,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   animation: hs2CardIn 480ms cubic-bezier(0.22,1,0.36,1) backwards;
-  gap: 8px;
-  padding: 16px 14px;
+  gap: 6px;
+  min-height: 0;
+  padding: 14px 16px;
   background: linear-gradient(165deg, var(--surface) 0%, var(--card-tint, var(--surface)) 155%);
   box-shadow: 0 8px 16px -8px rgba(48, 42, 38, 0.25);
   text-align: start;
@@ -1449,9 +1456,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hs2-card.card-beige     { --card-tint: var(--beige-tint); --card-accent: #cbb98f; }
 
 .hs2-card-icon {
-  width: 15px;
-  height: 15px;
-  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1461,10 +1468,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hs2-card-icon.tone-mauve     { background: var(--mauve-tint); color: var(--mauve-text); }
 .hs2-card-icon.tone-beige     { background: var(--beige-tint); color: var(--beige-text); }
 
-.hs2-card-name { font-size: 13px; font-weight: 800; color: var(--text); padding: 0 4px; line-height: 1.25; }
+.hs2-card-name { font-size: 15.5px; font-weight: 800; color: var(--text); padding: 0 4px; line-height: 1.25; }
 .hs2-card-stat { display: flex; align-items: baseline; gap: 3px; }
-.hs2-card-stat b { font-size: 14px; font-weight: 800; color: var(--text); }
-.hs2-card-stat span { font-size: 9px; font-weight: 500; color: var(--text-muted); }
+.hs2-card-stat b { font-size: 19px; font-weight: 800; color: var(--text); }
+.hs2-card-stat span { font-size: 11.5px; font-weight: 500; color: var(--text-muted); }
 .hs2-card-stat.is-urgent b { color: var(--mauve-text); }
 
 /* تموّج ضوء خفيف عند اللمس */
@@ -1486,16 +1493,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
    بلا كود إضافي. */
 .hs2-nav {
   position: fixed;
-  bottom: calc(10px + env(safe-area-inset-bottom));
-  inset-inline: 14px;
-  max-width: 432px;
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  inset-inline: 16px;
+  max-width: 380px;
   margin: 0 auto;
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 6px 6px;
-  border-radius: 26px;
+  padding: 4px;
+  border-radius: 22px;
   background: var(--surface);
   background: color-mix(in srgb, var(--surface) 74%, transparent);
   backdrop-filter: blur(24px) saturate(155%);
@@ -1512,12 +1519,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-width: 64px;
-  min-height: 56px;
-  padding: 8px 10px;
-  border-radius: 20px;
-  font-size: 10.5px;
+  gap: 3px;
+  min-width: 56px;
+  min-height: 46px;
+  padding: 5px 8px;
+  border-radius: 16px;
+  font-size: 9.5px;
   font-weight: 600;
   color: var(--text-muted);
   -webkit-tap-highlight-color: transparent;
@@ -1533,7 +1540,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: 16px;
   background: var(--turquoise-tint);
   background: linear-gradient(160deg,
     color-mix(in srgb, var(--turquoise) 30%, transparent),
@@ -1554,9 +1561,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 /* زر الإضافة — لوح زجاجي مضيء، والعلامة تدور ربع دورة عند الضغط */
 .hs2-nav-add-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 13px;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
   background: var(--turquoise);
   background: linear-gradient(160deg, color-mix(in srgb, var(--turquoise) 82%, #fff), var(--turquoise));
   color: #fff;
@@ -1574,8 +1581,26 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 @media (min-width: 640px) {
   .hs2-page { max-width: 560px; }
-  .hs2-nav { max-width: 532px; }
-  .hs2-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
+  .hs2-nav { max-width: 460px; }
+  .hs2-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .hs2-card { padding: 20px 22px; }
+  .hs2-card-name { font-size: 18px; }
+  .hs2-card-stat b { font-size: 24px; }
+  .hs2-card-icon { width: 32px; height: 32px; border-radius: 11px; }
+  .hs2-card:nth-child(7) { grid-column: auto; }
+}
+
+/* الأجهزة اللوحية والآيباد — الشاشة تتّسع فعلًا بدل عمود ضيّق وسط بياض */
+@media (min-width: 900px) {
+  .hs2-page { max-width: 780px; }
+  .hs2-nav { max-width: 520px; }
+  .hs2-grid { gap: 20px; }
+  .hs2-card { padding: 24px 26px; }
+  .hs2-card-name { font-size: 20px; }
+  .hs2-card-stat b { font-size: 28px; }
+  .hs2-card-stat span { font-size: 13px; }
+  .hs2-card-icon { width: 38px; height: 38px; border-radius: 13px; }
+  .v2-page, .v2-inner-page { max-width: 780px; }
 }
 
 /* ---------- عدّادات تكوين الشجرة ---------- */
@@ -2124,8 +2149,6 @@ html[data-theme="night"] {
       <!-- نتائج البحث تحل محل الباقي مؤقتًا -->
       <div class="hs2-search-results" id="hs2-search-results" hidden></div>
 
-      <div class="v2-page-footer" id="page-footer"></div>
-
     </div>
   
 </div>
@@ -2517,6 +2540,8 @@ const TRANSLATIONS = {
     search_no_results: 'لا يوجد أحد بهذا الاسم بدائرتك.',
     language_label: 'اللغة',
     settings_tab_data: 'البيانات',
+    settings_tab_circles: 'دوائري',
+    settings_tab_app: 'التطبيق',
     tree_plan_label: 'تكوين شجرتي',
     tree_plan_hint: 'حدّد العدد فقط. عند فتح «عائلتي» أو «أقاربي» من زر الإضافة تظهر الخانات جاهزة للأسماء.',
     tree_plan_saved: 'حُفظ تكوين الشجرة',
@@ -2780,6 +2805,8 @@ const TRANSLATIONS = {
     search_no_results: 'No one with this name in your circle.',
     language_label: 'Language',
     settings_tab_data: 'Data',
+    settings_tab_circles: 'My circles',
+    settings_tab_app: 'App',
     tree_plan_label: 'My family tree setup',
     tree_plan_hint: 'Set the counts only. Opening "My family" from Add shows the slots ready.',
     tree_plan_saved: 'Tree setup saved',
@@ -5334,8 +5361,8 @@ function setTreePlan(plan) {
 let settingsActiveTab = 'appearance';
 /* تبويبات فرعية داخل «شجرتي» — ٣١ عدّادًا في قائمة واحدة تعني تمريرًا
    طويلًا، والتبويب يختصرها إلى شاشة واحدة */
-const SETTINGS_TAB_KEYS = ['appearance', 'categories', 'reminders', 'general', 'data'];
-const SETTINGS_TAB_LABEL_KEYS = { appearance: 'settings_tab_appearance', categories: 'settings_tab_categories', reminders: 'settings_tab_reminders', general: 'settings_tab_general', data: 'settings_tab_data' };
+const SETTINGS_TAB_KEYS = ['appearance', 'circles', 'app'];
+const SETTINGS_TAB_LABEL_KEYS = { appearance: 'settings_tab_appearance', circles: 'settings_tab_circles', app: 'settings_tab_app' };
 
 function settingsTabContent(tab, settings) {
   if (tab === 'appearance') {
@@ -5369,8 +5396,17 @@ function settingsTabContent(tab, settings) {
       '</section>'))
     );
   }
-  if (tab === 'categories') {
+  if (tab === 'circles') {
     return (
+      '<section class="v2-info-card" style="margin-bottom:14px">' +
+        '<h2 class="v2-notes-head"><span>' + t('default_interval_label') + '</span></h2>' +
+        '<div class="v2-chip-row" id="default-interval-picker">' +
+          INTERVAL_OPTIONS.map(function (o) {
+            return '<button type="button" class="v2-chip' + (o.value === settings.defaultIntervalDays ? ' is-active' : '') + '" data-value="' + o.value + '">' + intervalLabel(o) + '</button>';
+          }).join('') +
+        '</div>' +
+        '<label class="v2-checkbox-row" style="margin-top:10px"><input type="checkbox" id="occasion-toggle"' + (settings.occasionRemindersEnabled ? ' checked' : '') + '> ' + t('occasion_reminder_desc') + '</label>' +
+      '</section>' +
       '<section class="v2-info-card">' +
         '<h2 class="v2-notes-head"><span>' + t('custom_names_label') + '</span></h2>' +
         '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('custom_names_hint') + '</p>' +
@@ -5388,24 +5424,25 @@ function settingsTabContent(tab, settings) {
       '</section>'
     );
   }
-  if (tab === 'reminders') {
+  if (tab === 'app') {
     return (
+      '<section class="v2-info-card" style="margin-bottom:14px" id="install-section">' +
+        '<h2 class="v2-notes-head"><span>' + t('install_app_label') + '</span></h2>' +
+        '<p class="v2-notes-empty" style="margin-bottom:10px" id="install-desc">' + t('install_app_desc') + '</p>' +
+        '<button type="button" class="v2-add-btn" id="install-btn">' + t('install_app_btn') + '</button>' +
+      '</section>' +
       '<section class="v2-info-card" style="margin-bottom:14px">' +
-        '<h2 class="v2-notes-head"><span>' + t('default_interval_label') + '</span></h2>' +
-        '<div class="v2-chip-row" id="default-interval-picker">' +
-          INTERVAL_OPTIONS.map(function (o) {
-            return '<button type="button" class="v2-chip' + (o.value === settings.defaultIntervalDays ? ' is-active' : '') + '" data-value="' + o.value + '">' + intervalLabel(o) + '</button>';
-          }).join('') +
+        '<h2 class="v2-notes-head"><span>' + t('how_it_works_label') + '</span></h2>' +
+        '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('how_it_works_desc') + '</p>' +
+        '<a class="v2-add-btn" href="onboarding.html?tour=1">' + t('how_it_works_btn') + '</a>' +
+      '</section>' +
+      '<section class="v2-info-card" style="margin-bottom:14px">' +
+        '<h2 class="v2-notes-head"><span>' + t('language_label') + '</span></h2>' +
+        '<div class="v2-chip-row" id="language-picker">' +
+          '<button type="button" class="v2-chip' + (currentLang() === 'ar' ? ' is-active' : '') + '" data-lang="ar">' + t('language_ar') + '</button>' +
+          '<button type="button" class="v2-chip' + (currentLang() === 'en' ? ' is-active' : '') + '" data-lang="en">' + t('language_en') + '</button>' +
         '</div>' +
       '</section>' +
-      '<section class="v2-info-card">' +
-        '<h2 class="v2-notes-head"><span>' + t('occasion_reminder_label') + '</span></h2>' +
-        '<label class="v2-checkbox-row"><input type="checkbox" id="occasion-toggle"' + (settings.occasionRemindersEnabled ? ' checked' : '') + '> ' + t('occasion_reminder_desc') + '</label>' +
-      '</section>'
-    );
-  }
-  if (tab === 'data') {
-    return (
       '<section class="v2-info-card" style="margin-bottom:14px">' +
         '<h2 class="v2-notes-head"><span>' + t('backup_label') + '</span></h2>' +
         '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('backup_desc') + '</p>' +
@@ -5430,31 +5467,7 @@ function settingsTabContent(tab, settings) {
       '</section>'
     );
   }
-  /* general */
-  return (
-    '<section class="v2-info-card" style="margin-bottom:14px" id="install-section">' +
-      '<h2 class="v2-notes-head"><span>' + t('install_app_label') + '</span></h2>' +
-      '<p class="v2-notes-empty" style="margin-bottom:10px" id="install-desc">' + t('install_app_desc') + '</p>' +
-      '<button type="button" class="v2-add-btn" id="install-btn">' + t('install_app_btn') + '</button>' +
-    '</section>' +
-    '<section class="v2-info-card" style="margin-bottom:14px">' +
-      '<h2 class="v2-notes-head"><span>' + t('how_it_works_label') + '</span></h2>' +
-      '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('how_it_works_desc') + '</p>' +
-      '<a class="v2-add-btn" href="onboarding.html?tour=1">' + t('how_it_works_btn') + '</a>' +
-    '</section>' +
-    '<section class="v2-info-card" style="margin-bottom:14px">' +
-      '<h2 class="v2-notes-head"><span>' + t('restart_onboarding_label') + '</span></h2>' +
-      '<p class="v2-notes-empty" style="margin-bottom:10px">' + t('restart_onboarding_desc') + '</p>' +
-      '<a class="v2-add-btn" href="onboarding.html">' + t('restart_onboarding_btn') + '</a>' +
-    '</section>' +
-    '<section class="v2-info-card">' +
-      '<h2 class="v2-notes-head"><span>' + t('language_label') + '</span></h2>' +
-      '<div class="v2-chip-row" id="language-picker">' +
-        '<button type="button" class="v2-chip' + (currentLang() === 'ar' ? ' is-active' : '') + '" data-lang="ar">' + t('language_ar') + '</button>' +
-        '<button type="button" class="v2-chip' + (currentLang() === 'en' ? ' is-active' : '') + '" data-lang="en">' + t('language_en') + '</button>' +
-      '</div>' +
-    '</section>'
-  );
+  return '';
 }
 
 function renderSettingsPage() {
