@@ -3071,7 +3071,13 @@ const TRANSLATIONS = {
 };
 
 function currentLang() {
-  try { return localStorage.getItem('sila:lang') || 'ar'; } catch (e) { return 'ar'; }
+  try {
+    /* من دخل من صفحة التعريف بالإنجليزية يفتح التطبيق بالإنجليزية —
+       يُقرأ مرة واحدة ثم يصير اختيارًا محفوظًا يملكه المستخدم */
+    var q = (location.search || '').match(/[?&]lang=(ar|en)\b/);
+    if (q && !localStorage.getItem('sila:lang')) localStorage.setItem('sila:lang', q[1]);
+    return localStorage.getItem('sila:lang') || 'ar';
+  } catch (e) { return 'ar'; }
 }
 function t(key) {
   const lang = currentLang();

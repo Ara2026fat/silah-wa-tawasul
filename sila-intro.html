@@ -110,6 +110,15 @@ p.desc{font-size:16.5px;color:var(--muted);line-height:1.95;margin-top:16px}
   color:#fff;font-weight:700;font-size:15.5px;padding:12px 26px;
   border-radius:999px;border:1px solid rgba(255,255,255,.14)}
 .navbtn:disabled{opacity:.3}
+/* زر اللغة — الزائر الإنجليزي كان يجد صفحة عربية بالكامل بلا مخرج */
+#lang-toggle{position:absolute;top:14px;inset-inline-end:14px;z-index:6;
+  width:44px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+  font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;letter-spacing:.5px;
+  background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.2);color:#fff;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:transform 150ms cubic-bezier(0.34,1.56,0.64,1)}
+#lang-toggle:active{transform:scale(0.9)}
 </style>
 </head><body>
 
@@ -117,64 +126,157 @@ p.desc{font-size:16.5px;color:var(--muted);line-height:1.95;margin-top:16px}
 
 <div class="pane on"><div class="hero">
   <div class="seal-ring rise"><img class="seal" src="data:image/png;base64,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" alt="صلة وتواصل"></div>
-  <h1 class="rise d1">صلة وتواصل</h1>
-  <p class="tag rise d2">رفيقك في صلة رحمك</p>
-  <p class="sub rise d3">لا يدير علاقاتك، بل يعتني بها.</p>
+  <h1 class="rise d1" data-i18n="app"></h1>
+  <p class="tag rise d2" data-i18n="tag"></p>
+  <p class="sub rise d3" data-i18n="sub"></p>
 </div></div>
 
 <div class="pane content"><div class="wrap">
-  <h2 class="rise">لماذا صلة وتواصل</h2>
+  <h2 class="rise" data-i18n="why"></h2>
   <div class="rule rise d1"></div>
   <div class="glass-container rise d2">
-    <p class="big">أعظم القرب أن تكون قريبًا ممن هما <b>مفتاح جنّتك</b> — والداك —<br>
-    الأحياء منهم بالتواصل المستمر، <b>والأموات بالدعاء المستمر</b>.</p>
+    <p class="big" data-i18n-html="whyBig"></p>
   </div>
-  <p class="desc rise d3">الحياة تشغلنا، والأيام تمر، ومن نحب يبتعدون بلا قصد. صلة وتواصل يذكّرك بهم في وقتهم — بجملة إنسانية دافئة.</p>
+  <p class="desc rise d3" data-i18n="whyDesc"></p>
 </div></div>
 
 <div class="pane content"><div class="wrap">
-  <h2 class="rise">دوائر القرب</h2>
+  <h2 class="rise" data-i18n="circles"></h2>
   <div class="rule rise d1"></div>
-  <p class="lead rise d2">القرب يبدأ من والديك، ويتّسع دائرة بعد دائرة</p>
-  <div class="circles rise d3">
-    <div class="glass-card"><span class="orb c0">١</span><span class="circle-text">والداك<span>مفتاح جنّتك</span></span></div>
-    <div class="glass-card"><span class="orb c1">٢</span><span class="circle-text">عائلتك الصغيرة<span>سكنك، وموضع طمأنينتك</span></span></div>
-    <div class="glass-card"><span class="orb c2">٣</span><span class="circle-text">إخوتك وأخواتك<span>كنزٌ لا يفنى</span></span></div>
-    <div class="glass-card"><span class="orb c3">٤</span><span class="circle-text">أقاربك وصلة رحمك<span>ظلٌّ لا يغيب</span></span></div>
-    <div class="glass-card"><span class="orb c4">٥</span><span class="circle-text">أصدقاؤك<span>أسرة اخترتها بقلبك</span></span></div>
-    <div class="glass-card"><span class="orb c5">٦</span><span class="circle-text">زملاؤك<span>رفقاء دربك ومسيرتك</span></span></div>
-  </div>
+  <p class="lead rise d2" data-i18n="circlesLead"></p>
+  <div class="circles rise d3" id="circles"></div>
 </div></div>
 
 <div class="pane content"><div class="wrap">
-  <h2 class="rise">كيف يساعدك</h2>
+  <h2 class="rise" data-i18n="how"></h2>
   <div class="rule rise d1"></div>
-  <div class="features rise d2">
-    <div class="feature"><b>🌿 تذكير هادئ</b><span>جملة حياة دافئة، لا رقم يُشعرك بالتقصير</span></div>
-    <div class="feature"><b>🤲 دعاء لا اتصال</b><span>لكل من فقدناهم، دعاء بدل رقم لا يُرد عليه</span></div>
-    <div class="feature"><b>💭 ذكريات محفوظة</b><span>احفظ لحظة جميلة مع كل شخص تحبه</span></div>
-    <div class="feature"><b>📱 يعيش بجوالك</b><span>تطبيق حقيقي، بلا إنترنت دائم، بياناتك عندك أنت</span></div>
-  </div>
+  <div class="features rise d2" id="features"></div>
 </div></div>
 
 <div class="pane"><div class="cta">
-  <h2 class="rise">ابدأ الآن</h2>
+  <h2 class="rise" data-i18n="start"></h2>
   <div class="rule rise d1"></div>
-  <p class="rise d2">من تحب ينتظر منك كلمة.<br>لا تدعها تفوتك.</p>
-  <a class="open-btn rise d3" href="https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html" target="_blank" rel="noopener">افتح صلة وتواصل</a>
+  <p class="rise d2" data-i18n-html="startP"></p>
+  <a class="open-btn rise d3" href="https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html" target="_blank" rel="noopener" data-i18n="openBtn"></a>
 </div></div>
 
 </div>
 
+<button id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+
 <div id="nav">
-  <button class="navbtn" id="prev" onclick="pv()">السابق</button>
+  <button class="navbtn" id="prev" onclick="pv()" data-i18n="prev"></button>
   <div id="dots"></div>
-  <button class="navbtn" id="next" onclick="nx()">التالي</button>
+  <button class="navbtn" id="next" onclick="nx()" data-i18n="next"></button>
 </div>
 
 <script>
 (function(){
   var panes = [].slice.call(document.querySelectorAll(".pane"));
+  /* ---------- اللغتان ----------
+     الصفحة كانت عربية بالكامل بلا مخرج للزائر الإنجليزي. الاختيار
+     يُحفظ، ويُطبَّق قبل أول رسم فلا ومضة. */
+  var I18N = {
+    ar: {
+      dir: 'rtl', lang: 'ar', btn: 'EN',
+      app: 'صلة وتواصل',
+      tag: 'رفيقك في صلة رحمك',
+      sub: 'لا يدير علاقاتك، بل يعتني بها.',
+      why: 'لماذا صلة وتواصل',
+      whyBig: 'أعظم القرب أن تكون قريبًا ممن هما <b>مفتاح جنّتك</b> — والداك —<br>الأحياء منهم بالتواصل المستمر، <b>والأموات بالدعاء المستمر</b>.',
+      whyDesc: 'الحياة تشغلنا، والأيام تمر، ومن نحب يبتعدون بلا قصد. صلة وتواصل يذكّرك بهم في وقتهم — بجملة إنسانية دافئة.',
+      circles: 'دوائر القرب',
+      circlesLead: 'القرب يبدأ من والديك، ويتّسع دائرة بعد دائرة',
+      circleList: [
+        ['١', 'والداك', 'مفتاح جنّتك'],
+        ['٢', 'عائلتك الصغيرة', 'سكنك، وموضع طمأنينتك'],
+        ['٣', 'إخوتك وأخواتك', 'كنزٌ لا يفنى'],
+        ['٤', 'أقاربك وصلة رحمك', 'ظلٌّ لا يغيب'],
+        ['٥', 'أصدقاؤك', 'أسرة اخترتها بقلبك'],
+        ['٦', 'زملاؤك', 'رفقاء دربك ومسيرتك'],
+      ],
+      how: 'كيف يساعدك',
+      featureList: [
+        ['🌿 تذكير هادئ', 'جملة حياة دافئة، لا رقم يُشعرك بالتقصير'],
+        ['🤲 نتعهّدهم بالدعاء', 'لكل من فقدناهم، دعاء بدل رقم لا يُرد عليه'],
+        ['💭 ذكريات محفوظة', 'احفظ لحظة جميلة مع كل شخص تحبه'],
+        ['📱 يعيش بجوالك', 'تطبيق حقيقي، بلا إنترنت دائم، بياناتك عندك أنت'],
+      ],
+      start: 'ابدأ الآن',
+      startP: 'من تحب ينتظر منك كلمة.<br>لا تدعها تفوتك.',
+      openBtn: 'افتح صلة وتواصل',
+      prev: 'السابق', next: 'التالي',
+    },
+    en: {
+      dir: 'ltr', lang: 'en', btn: 'ع',
+      app: 'Sila wa Tawasul',
+      tag: 'Your companion in keeping family ties',
+      sub: "It doesn't manage your relationships — it cares for them.",
+      why: 'Why Sila wa Tawasul',
+      whyBig: 'The closest you can be is to those who are <b>your key to Paradise</b> — your parents —<br>the living through constant contact, <b>and those who passed through constant prayer</b>.',
+      whyDesc: 'Life keeps us busy, days pass, and those we love drift away without meaning to. Sila wa Tawasul reminds you of them at the right time — in a warm human sentence.',
+      circles: 'Circles of closeness',
+      circlesLead: 'Closeness begins with your parents, then widens circle by circle',
+      circleList: [
+        ['1', 'Your parents', 'Your key to Paradise'],
+        ['2', 'Your own family', 'Your shelter and peace'],
+        ['3', 'Your brothers and sisters', 'A treasure that never runs out'],
+        ['4', 'Your relatives', 'A shade that never leaves'],
+        ['5', 'Your friends', 'A family your heart chose'],
+        ['6', 'Your colleagues', 'Companions of your path'],
+      ],
+      how: 'How it helps you',
+      featureList: [
+        ['🌿 A gentle reminder', 'A warm sentence about life, not a number that makes you feel guilty'],
+        ['🤲 We keep them in our prayers', 'For those we lost — a prayer instead of a number no one answers'],
+        ['💭 Memories kept', 'Save a beautiful moment with everyone you love'],
+        ['📱 Lives on your phone', 'A real app, works offline, and your data stays with you'],
+      ],
+      start: 'Start now',
+      startP: 'Someone you love is waiting for a word from you.<br>Don\u2019t let it pass.',
+      openBtn: 'Open Sila wa Tawasul',
+      prev: 'Back', next: 'Next',
+    }
+  };
+
+  function applyLang(code){
+    var L = I18N[code] || I18N.ar;
+    try { localStorage.setItem('sila:introLang', code); } catch(e){}
+    document.documentElement.setAttribute('lang', L.lang);
+    document.documentElement.setAttribute('dir', L.dir);
+    document.getElementById('lang-toggle').textContent = L.btn;
+    document.title = L.app;
+
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for (var k = 0; k < nodes.length; k++) nodes[k].textContent = L[nodes[k].dataset.i18n] || '';
+    var html = document.querySelectorAll('[data-i18n-html]');
+    for (var h = 0; h < html.length; h++) html[h].innerHTML = L[html[h].dataset.i18nHtml] || '';
+
+    document.getElementById('circles').innerHTML = L.circleList.map(function (c, idx) {
+      return '<div class="glass-card"><span class="orb c' + idx + '">' + c[0] + '</span>' +
+             '<span class="circle-text">' + c[1] + '<span>' + c[2] + '</span></span></div>';
+    }).join('');
+    document.getElementById('features').innerHTML = L.featureList.map(function (f) {
+      return '<div class="feature"><b>' + f[0] + '</b><span>' + f[1] + '</span></div>';
+    }).join('');
+
+    /* نمرّر اللغة للتطبيق حتى يفتح بلغة الزائر بلا تبديل يدوي */
+    var appLinks = document.querySelectorAll('a[href*="sila-spa.html"]');
+    for (var a = 0; a < appLinks.length; a++) {
+      appLinks[a].href = 'https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html?lang=' + code;
+    }
+
+    var seal = document.querySelector('.seal');
+    if (seal) seal.alt = L.app;
+    if (typeof relabel === 'function') relabel();
+    if (typeof fit === 'function') setTimeout(fit, 30);
+  }
+
+  document.getElementById('lang-toggle').addEventListener('click', function(){
+    applyLang(document.documentElement.getAttribute('lang') === 'ar' ? 'en' : 'ar');
+  });
+
+
   var i = 0;
   var dotsEl = document.getElementById("dots");
   var nextEl = document.getElementById("next");
@@ -189,12 +291,12 @@ p.desc{font-size:16.5px;color:var(--muted);line-height:1.95;margin-top:16px}
   function relabel(){
     if(i === panes.length - 1){
       nextEl.classList.add("seal-btn");
-      nextEl.setAttribute("aria-label", "افتح صلة وتواصل");
+      nextEl.setAttribute("aria-label", (document.documentElement.getAttribute('lang') === 'en') ? 'Open Sila wa Tawasul' : 'افتح صلة وتواصل');
       if(!nextEl.querySelector("img")) nextEl.innerHTML = '<img src="' + sealSrc + '" alt="">';
     } else {
       nextEl.classList.remove("seal-btn");
       nextEl.removeAttribute("aria-label");
-      nextEl.textContent = "التالي";
+      nextEl.textContent = (document.documentElement.getAttribute('lang') === 'en') ? 'Next' : 'التالي';
     }
   }
 
@@ -212,7 +314,7 @@ p.desc{font-size:16.5px;color:var(--muted);line-height:1.95;margin-top:16px}
   window.nx = function(){
     if(i === panes.length - 1){
       if(navigator.vibrate) navigator.vibrate(35);
-      window.open("https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html", "_blank");
+      window.open("https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html?lang=" + (document.documentElement.getAttribute("lang") || "ar"), "_blank");
       return;
     }
     show(i + 1);
@@ -275,6 +377,9 @@ p.desc{font-size:16.5px;color:var(--muted);line-height:1.95;margin-top:16px}
   }
 
   relabel();
-})();
-</script>
-</body></html>
+
+  /* اللغة آخر ما يُطبَّق: relabel يحتاج أزرار التنقّل مهيّأة */
+  var savedLang = null;
+  try { savedLang = localStorage.getItem('sila:introLang'); } catch(e){}
+  applyLang(savedLang || ((navigator.language || 'ar').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en'));
+})();</script>
