@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>صلة وتواصل</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --marine:#2f7fc4; --marine-deep:#0d2f4a; --marine-glow:#5aa8e0;
+  --gold:#e8b95c;
+  --sage:#6fae94; --sage-glow:#a9dcc6;
+  --ink:#eef3f7; --muted:#c2d3e2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;touch-action:pan-x;-webkit-text-size-adjust:100%;text-size-adjust:100%;font-family:'Tajawal',sans-serif;color:var(--ink)}
+body{background:radial-gradient(ellipse at 25% 0%,#173a5c,#081824 62%)}
+#deck{position:relative;height:100svh;width:100%;max-width:760px;margin:0 auto;overflow:hidden}
+.pane{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
+.pane.on{opacity:1;pointer-events:auto}
+.pane.content{padding:30px 22px 104px;justify-content:center;overflow:hidden}
+.wrap{max-width:640px;width:100%;transform-origin:center center;will-change:transform}
+
+.rise{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+.pane.on .rise{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.26s}.d3{transition-delay:.4s}.d4{transition-delay:.54s}
+
+/* الحاوية الزجاجية الخارجية */
+.glass-container{
+  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+  border:1px solid rgba(255,255,255,.09); border-radius:28px;
+  padding:24px 18px; box-shadow:0 22px 55px rgba(0,0,0,.4);
+}
+
+/* الغلاف */
+.hero{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 26px 130px}
+.hero .seal-ring{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;background:radial-gradient(circle,rgba(90,168,224,.22),rgba(90,168,224,0) 70%);
+  animation:pulseRing 3.2s ease-in-out infinite}
+@keyframes pulseRing{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.hero .seal{width:104px;height:auto;border-radius:24px;box-shadow:0 18px 40px -10px rgba(0,0,0,.5)}
+.hero h1{font-family:'Amiri',serif;font-weight:700;font-size:clamp(34px,10.5vw,44px);white-space:nowrap;margin-bottom:10px;color:#fff}
+.hero .tag{white-space:nowrap;font-size:clamp(16px,4.8vw,18.5px);font-weight:600;color:var(--marine-glow);margin-bottom:6px}
+.hero .sub{font-size:16px;color:var(--muted)}
+
+h2{font-family:'Amiri',serif;font-weight:700;font-size:clamp(23px,7vw,27px);color:#fff;margin-bottom:8px;text-wrap:balance}
+.rule{width:50px;height:3px;background:linear-gradient(90deg,var(--marine-glow),var(--gold));margin:0 auto 14px;border-radius:2px}
+.lead{text-wrap:balance;font-size:17.5px;font-weight:700;color:var(--ink);line-height:1.6;margin-bottom:6px}
+.big{font-size:23px;font-weight:700;line-height:1.9;color:var(--ink)}
+.big b{color:var(--gold)}
+p.desc{font-size:16.5px;color:var(--muted);line-height:1.95;margin-top:16px}
+
+/* بطاقات زجاجية — الكرة المضيئة كل واحدة بلونها */
+.circles{display:flex;flex-direction:column;gap:9px;margin-top:14px;text-align:start;max-width:440px;margin-inline:auto}
+.glass-card{display:flex;align-items:center;gap:13px;padding:13px 15px;
+  background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.1); border-radius:14px;
+  box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.orb{flex-shrink:0;width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:15px;color:#0d1620}
+.orb.c0{background:radial-gradient(circle at 35% 30%,#ffe9b0,var(--gold) 65%);box-shadow:0 0 18px rgba(232,185,92,.65)}
+.orb.c1{background:radial-gradient(circle at 35% 30%,#8fd4ff,var(--marine) 65%);box-shadow:0 0 16px rgba(90,168,224,.55)}
+.orb.c2{background:radial-gradient(circle at 35% 30%,#cdefe0,var(--sage) 65%);box-shadow:0 0 16px rgba(111,174,148,.5)}
+.orb.c3{background:radial-gradient(circle at 35% 30%,#8fd4ff,var(--marine) 65%);box-shadow:0 0 16px rgba(90,168,224,.55)}
+.orb.c4{background:radial-gradient(circle at 35% 30%,#cdefe0,var(--sage) 65%);box-shadow:0 0 16px rgba(111,174,148,.5)}
+.orb.c5{background:radial-gradient(circle at 35% 30%,#ffe9b0,var(--gold) 65%);box-shadow:0 0 16px rgba(232,185,92,.5)}
+.circle-text{font-size:16px;font-weight:700;color:#fff}
+.circle-text span{display:block;font-size:13.5px;font-weight:500;color:var(--muted);margin-top:3px;line-height:1.5}
+
+.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;text-align:start}
+.feature{background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.1); border-radius:17px;
+  box-shadow:0 8px 22px rgba(0,0,0,.28); padding:16px 15px}
+.feature b{display:block;font-size:16.5px;color:#fff;margin-bottom:4px}
+.feature span{font-size:14.5px;color:var(--muted);line-height:1.7}
+
+.cta{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 26px 130px}
+.cta p{font-size:17.5px;color:var(--muted);margin-bottom:30px;line-height:1.8}
+.open-btn{position:relative;overflow:hidden;display:inline-block;background:linear-gradient(180deg,#f5d089,var(--gold) 52%,#c99433);
+  color:#20160a;font-weight:800;font-size:clamp(17px,5vw,20px);padding:16px 32px;border-radius:999px;text-decoration:none;white-space:nowrap;max-width:calc(100vw - 60px);
+  display:inline-flex;align-items:center;gap:12px;
+  box-shadow:0 6px 0 #a67722,0 16px 34px -8px rgba(232,185,92,.55),0 0 0 1px rgba(255,255,255,.25) inset;
+  transition:transform .12s ease,box-shadow .12s ease;
+  animation:btnGlow 2.6s ease-in-out infinite}
+.open-btn:active{transform:translateY(5px);box-shadow:0 1px 0 #a67722,0 4px 14px -6px rgba(232,185,92,.5),0 0 0 1px rgba(255,255,255,.25) inset;
+  animation:none}
+@keyframes btnGlow{0%,100%{box-shadow:0 6px 0 #a67722,0 16px 34px -8px rgba(232,185,92,.55),0 0 0 1px rgba(255,255,255,.25) inset}
+  50%{box-shadow:0 6px 0 #a67722,0 16px 44px -4px rgba(232,185,92,.8),0 0 0 1px rgba(255,255,255,.35) inset}}
+/* الشعار في نهاية شريط التنقّل بدل تكرار عبارة الفتح */
+.navbtn.seal-btn{padding:0;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border-color:rgba(232,185,92,.5);box-shadow:0 0 20px rgba(232,185,92,.28);animation:sealPulse 2.4s ease-in-out infinite}
+.navbtn.seal-btn img{width:30px;height:auto;border-radius:9px;display:block}
+@keyframes sealPulse{0%,100%{box-shadow:0 0 18px rgba(232,185,92,.22)}50%{box-shadow:0 0 30px rgba(232,185,92,.5)}}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.7);transform:scale(0);
+  animation:rippleOut .55s ease-out forwards;pointer-events:none}
+@keyframes rippleOut{to{transform:scale(2.6);opacity:0}}
+
+/* التنقّل */
+#nav{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:20px;
+  padding:18px 20px calc(18px + env(safe-area-inset-bottom));z-index:10}
+#dots{display:flex;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);transition:all .3s ease}
+.dot.on{width:22px;border-radius:4px;background:linear-gradient(90deg,var(--marine-glow),var(--gold))}
+.navbtn{background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  color:#fff;font-weight:700;font-size:15.5px;padding:12px 26px;
+  border-radius:999px;border:1px solid rgba(255,255,255,.14)}
+.navbtn:disabled{opacity:.3}
+/* زر اللغة — الزائر الإنجليزي كان يجد صفحة عربية بالكامل بلا مخرج */
+#lang-toggle{position:absolute;top:14px;inset-inline-end:14px;z-index:6;
+  width:44px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+  font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;letter-spacing:.5px;
+  background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.2);color:#fff;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:transform 150ms cubic-bezier(0.34,1.56,0.64,1)}
+#lang-toggle:active{transform:scale(0.9)}
+</style>
+</head><body>
+
+<div id="deck">
+
+<div class="pane on"><div class="hero">
+  <div class="seal-ring rise"><img class="seal" src="data:image/png;base64,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" alt="صلة وتواصل"></div>
+  <h1 class="rise d1" data-i18n="app"></h1>
+  <p class="tag rise d2" data-i18n="tag"></p>
+  <p class="sub rise d3" data-i18n="sub"></p>
+</div></div>
+
+<div class="pane content"><div class="wrap">
+  <h2 class="rise" data-i18n="why"></h2>
+  <div class="rule rise d1"></div>
+  <div class="glass-container rise d2">
+    <p class="big" data-i18n-html="whyBig"></p>
+  </div>
+  <p class="desc rise d3" data-i18n="whyDesc"></p>
+</div></div>
+
+<div class="pane content"><div class="wrap">
+  <h2 class="rise" data-i18n="circles"></h2>
+  <div class="rule rise d1"></div>
+  <p class="lead rise d2" data-i18n="circlesLead"></p>
+  <div class="circles rise d3" id="circles"></div>
+</div></div>
+
+<div class="pane content"><div class="wrap">
+  <h2 class="rise" data-i18n="how"></h2>
+  <div class="rule rise d1"></div>
+  <div class="features rise d2" id="features"></div>
+</div></div>
+
+<div class="pane"><div class="cta">
+  <h2 class="rise" data-i18n="start"></h2>
+  <div class="rule rise d1"></div>
+  <p class="rise d2" data-i18n-html="startP"></p>
+  <a class="open-btn rise d3" href="https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html" target="_blank" rel="noopener" data-i18n="openBtn"></a>
+</div></div>
+
+</div>
+
+<button id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+
+<div id="nav">
+  <button class="navbtn" id="prev" onclick="pv()" data-i18n="prev"></button>
+  <div id="dots"></div>
+  <button class="navbtn" id="next" onclick="nx()" data-i18n="next"></button>
+</div>
+
+<script>
+(function(){
+  var panes = [].slice.call(document.querySelectorAll(".pane"));
+  /* ---------- اللغتان ----------
+     الصفحة كانت عربية بالكامل بلا مخرج للزائر الإنجليزي. الاختيار
+     يُحفظ، ويُطبَّق قبل أول رسم فلا ومضة. */
+  var I18N = {
+    ar: {
+      dir: 'rtl', lang: 'ar', btn: 'EN',
+      app: 'صلة وتواصل',
+      tag: 'رفيقك في صلة رحمك',
+      sub: 'لا يدير علاقاتك، بل يعتني بها.',
+      why: 'لماذا صلة وتواصل',
+      whyBig: 'أعظم القرب أن تكون قريبًا ممن هما <b>مفتاح جنّتك</b> — والداك —<br>الأحياء منهم بالتواصل المستمر، <b>والأموات بالدعاء المستمر</b>.',
+      whyDesc: 'الحياة تشغلنا، والأيام تمر، ومن نحب يبتعدون بلا قصد. صلة وتواصل يذكّرك بهم في وقتهم — بجملة إنسانية دافئة.',
+      circles: 'دوائر القرب',
+      circlesLead: 'القرب يبدأ من والديك، ويتّسع دائرة بعد دائرة',
+      circleList: [
+        ['١', 'والداك', 'مفتاح جنّتك'],
+        ['٢', 'عائلتك الصغيرة', 'سكنك، وموضع طمأنينتك'],
+        ['٣', 'إخوتك وأخواتك', 'كنزٌ لا يفنى'],
+        ['٤', 'أقاربك وصلة رحمك', 'ظلٌّ لا يغيب'],
+        ['٥', 'أصدقاؤك', 'أسرة اخترتها بقلبك'],
+        ['٦', 'زملاؤك', 'رفقاء دربك ومسيرتك'],
+      ],
+      how: 'كيف يساعدك',
+      featureList: [
+        ['🌿 تذكير هادئ', 'جملة حياة دافئة، لا رقم يُشعرك بالتقصير'],
+        ['🤲 نتعهّدهم بالدعاء', 'لكل من فقدناهم، دعاء بدل رقم لا يُرد عليه'],
+        ['💭 ذكريات محفوظة', 'احفظ لحظة جميلة مع كل شخص تحبه'],
+        ['📱 يعيش بجوالك', 'تطبيق حقيقي، بلا إنترنت دائم، بياناتك عندك أنت'],
+      ],
+      start: 'ابدأ الآن',
+      startP: 'من تحب ينتظر منك كلمة.<br>لا تدعها تفوتك.',
+      openBtn: 'افتح صلة وتواصل',
+      prev: 'السابق', next: 'التالي',
+    },
+    en: {
+      dir: 'ltr', lang: 'en', btn: 'ع',
+      app: 'Sila wa Tawasul',
+      tag: 'Your companion in keeping family ties',
+      sub: "It doesn't manage your relationships — it cares for them.",
+      why: 'Why Sila wa Tawasul',
+      whyBig: 'The closest you can be is to those who are <b>your key to Paradise</b> — your parents —<br>the living through constant contact, <b>and those who passed through constant prayer</b>.',
+      whyDesc: 'Life keeps us busy, days pass, and those we love drift away without meaning to. Sila wa Tawasul reminds you of them at the right time — in a warm human sentence.',
+      circles: 'Circles of closeness',
+      circlesLead: 'Closeness begins with your parents, then widens circle by circle',
+      circleList: [
+        ['1', 'Your parents', 'Your key to Paradise'],
+        ['2', 'Your own family', 'Your shelter and peace'],
+        ['3', 'Your brothers and sisters', 'A treasure that never runs out'],
+        ['4', 'Your relatives', 'A shade that never leaves'],
+        ['5', 'Your friends', 'A family your heart chose'],
+        ['6', 'Your colleagues', 'Companions of your path'],
+      ],
+      how: 'How it helps you',
+      featureList: [
+        ['🌿 A gentle reminder', 'A warm sentence about life, not a number that makes you feel guilty'],
+        ['🤲 We keep them in our prayers', 'For those we lost — a prayer instead of a number no one answers'],
+        ['💭 Memories kept', 'Save a beautiful moment with everyone you love'],
+        ['📱 Lives on your phone', 'A real app, works offline, and your data stays with you'],
+      ],
+      start: 'Start now',
+      startP: 'Someone you love is waiting for a word from you.<br>Don\u2019t let it pass.',
+      openBtn: 'Open Sila wa Tawasul',
+      prev: 'Back', next: 'Next',
+    }
+  };
+
+  function applyLang(code){
+    var L = I18N[code] || I18N.ar;
+    try { localStorage.setItem('sila:introLang', code); } catch(e){}
+    document.documentElement.setAttribute('lang', L.lang);
+    document.documentElement.setAttribute('dir', L.dir);
+    document.getElementById('lang-toggle').textContent = L.btn;
+    document.title = L.app;
+
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for (var k = 0; k < nodes.length; k++) nodes[k].textContent = L[nodes[k].dataset.i18n] || '';
+    var html = document.querySelectorAll('[data-i18n-html]');
+    for (var h = 0; h < html.length; h++) html[h].innerHTML = L[html[h].dataset.i18nHtml] || '';
+
+    document.getElementById('circles').innerHTML = L.circleList.map(function (c, idx) {
+      return '<div class="glass-card"><span class="orb c' + idx + '">' + c[0] + '</span>' +
+             '<span class="circle-text">' + c[1] + '<span>' + c[2] + '</span></span></div>';
+    }).join('');
+    document.getElementById('features').innerHTML = L.featureList.map(function (f) {
+      return '<div class="feature"><b>' + f[0] + '</b><span>' + f[1] + '</span></div>';
+    }).join('');
+
+    /* نمرّر اللغة للتطبيق حتى يفتح بلغة الزائر بلا تبديل يدوي */
+    var appLinks = document.querySelectorAll('a[href*="sila-spa.html"]');
+    for (var a = 0; a < appLinks.length; a++) {
+      appLinks[a].href = 'https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html?lang=' + code;
+    }
+
+    var seal = document.querySelector('.seal');
+    if (seal) seal.alt = L.app;
+    if (typeof relabel === 'function') relabel();
+    if (typeof fit === 'function') setTimeout(fit, 30);
+  }
+
+  document.getElementById('lang-toggle').addEventListener('click', function(){
+    applyLang(document.documentElement.getAttribute('lang') === 'ar' ? 'en' : 'ar');
+  });
+
+
+  var i = 0;
+  var dotsEl = document.getElementById("dots");
+  var nextEl = document.getElementById("next");
+  var prevEl = document.getElementById("prev");
+
+  dotsEl.innerHTML = panes.map(function(_, n){
+    return '<span class="dot' + (n===0 ? ' on' : '') + '"></span>';
+  }).join('');
+  var dots = [].slice.call(dotsEl.children);
+
+  var sealSrc = (document.querySelector(".seal") || {}).src || "";
+  function relabel(){
+    if(i === panes.length - 1){
+      nextEl.classList.add("seal-btn");
+      nextEl.setAttribute("aria-label", (document.documentElement.getAttribute('lang') === 'en') ? 'Open Sila wa Tawasul' : 'افتح صلة وتواصل');
+      if(!nextEl.querySelector("img")) nextEl.innerHTML = '<img src="' + sealSrc + '" alt="">';
+    } else {
+      nextEl.classList.remove("seal-btn");
+      nextEl.removeAttribute("aria-label");
+      nextEl.textContent = (document.documentElement.getAttribute('lang') === 'en') ? 'Next' : 'التالي';
+    }
+  }
+
+  function show(n){
+    if(n < 0 || n >= panes.length) return;
+    panes[i].classList.remove("on");
+    dots[i].classList.remove("on");
+    i = n;
+    panes[i].classList.add("on");
+    dots[i].classList.add("on");
+    prevEl.disabled = (i === 0);
+    relabel();
+  }
+
+  window.nx = function(){
+    if(i === panes.length - 1){
+      if(navigator.vibrate) navigator.vibrate(35);
+      window.open("https://ara2026fat.github.io/silah-wa-tawasul/sila-spa.html?lang=" + (document.documentElement.getAttribute("lang") || "ar"), "_blank");
+      return;
+    }
+    show(i + 1);
+  };
+  window.pv = function(){ show(i - 1); };
+
+  var x0 = null;
+  document.getElementById("deck").addEventListener("touchstart", function(e){
+    x0 = (e.touches.length > 1) ? null : e.touches[0].clientX;
+  }, {passive:true});
+  document.getElementById("deck").addEventListener("touchend", function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    x0 = null;
+    if(Math.abs(dx) < 55) return;
+    if(dx < 0) show(i + 1); else show(i - 1);
+  }, {passive:true});
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "ArrowLeft") show(i + 1);
+    else if(e.key === "ArrowRight") show(i - 1);
+  });
+
+  /* ملاءمة تلقائية: لا تمرير إطلاقاً — المحتوى يتقلّص/يتمدّد ليملأ الشاشة */
+  function fit(){
+    var wraps = document.querySelectorAll(".pane.content .wrap");
+    for(var k=0;k<wraps.length;k++){
+      var w = wraps[k], pane = w.parentElement;
+      w.style.transform = "none";
+      var cs = getComputedStyle(pane);
+      var avail = pane.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      var need = w.scrollHeight;
+      if(need > 0){
+        var s = avail / need;
+        if(s > 1.14) s = 1.14;
+        if(s < 0.62) s = 0.62;
+        w.style.transform = (s < 0.999 || s > 1.001) ? "scale(" + s.toFixed(3) + ")" : "none";
+      }
+    }
+  }
+  window.addEventListener("resize", fit);
+  window.addEventListener("orientationchange", function(){ setTimeout(fit,250); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  setTimeout(fit,0); setTimeout(fit,400); setTimeout(fit,1200);
+
+  var openBtn = document.querySelector(".open-btn");
+  if(openBtn){
+    openBtn.addEventListener("click", function(e){
+      if(navigator.vibrate) navigator.vibrate(35);
+      var rect = openBtn.getBoundingClientRect();
+      var ripple = document.createElement("span");
+      var size = Math.max(rect.width, rect.height) * 1.4;
+      ripple.className = "ripple";
+      ripple.style.width = ripple.style.height = size + "px";
+      ripple.style.left = (e.clientX - rect.left - size/2) + "px";
+      ripple.style.top = (e.clientY - rect.top - size/2) + "px";
+      openBtn.appendChild(ripple);
+      setTimeout(function(){ if(ripple.parentNode) ripple.parentNode.removeChild(ripple); }, 600);
+    });
+  }
+
+  relabel();
+
+  /* اللغة آخر ما يُطبَّق: relabel يحتاج أزرار التنقّل مهيّأة */
+  var savedLang = null;
+  try { savedLang = localStorage.getItem('sila:introLang'); } catch(e){}
+  applyLang(savedLang || ((navigator.language || 'ar').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en'));
+})();</script>
